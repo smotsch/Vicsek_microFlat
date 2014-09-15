@@ -50,28 +50,21 @@ $(EXEC): $(OBJECTS)
 %.o : %.f90
 	$(CC) -c $< -o $(OBJDIR)/$@ -module $(OBJDIR)
 
-.PHONY: init_folder init_parameters move test
+.PHONY: init_folder init_parameters move clean
 init_folder:
 	mkdir -p $(OBJDIR) data images videos
 init_parameters:
 	@if [ ! -f 'bin/PARAMETER_init.txt' ]; then \
-	  cp bin/Parameters/PARAMETER_init_bak.txt bin/PARAMETER_init.txt; \
+	  cp bin/parameters/PARAMETER_init_bak.txt bin/PARAMETER_init.txt; \
 	fi
 	@if [ ! -f 'bin/PARAMETER_SppFlat2D.txt' ]; then \
-	  cp bin/Parameters/PARAMETER_SppFlat2D_bak.txt bin/PARAMETER_SppFlat2D.txt; \
+	  cp bin/parameters/PARAMETER_SppFlat2D_bak.txt bin/PARAMETER_SppFlat2D.txt; \
 	fi
 move:
 	mv $(EXEC) bin
 clean:
 	rm -rf $(OBJDIR)/*.mod
 	rm -rf $(OBJDIR)/*.o
-copy:
-	cp -i ../PARAMETER_init.txt PARAMETER_init_bak.txt
-	cp -i ../PARAMETER_SppFlat2D.txt PARAMETER_SppFlat2D_bak.txt
-	cp -i ../Display_particlesFlat2D.m Display_particlesFlat2D_bak.m
-	cp -i ../Display_macroFlat2D.m Display_macroFlat2D_bak.m
-
-
 
 
 ##----------------------------------------##
