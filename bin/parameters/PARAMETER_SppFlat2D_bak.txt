@@ -2,7 +2,7 @@
 ##       Parameters of the Spp system         ##
 ##--------------------------------------------##
 ## N: number of particles
-10000
+2000
 ## Models: c, nu, d, rVision
 1 
 1
@@ -10,10 +10,10 @@
 .2
 ## Domain (Lx, Ly)
 10
-4
+10
 ## Boundary Condition
 ##  1:periodic, 2:reflexive, 3:periodic-reflexive, 4:ellipse
-4
+1
 ## Time (dt,Time)
 0.05
 100

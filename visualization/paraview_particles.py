@@ -14,7 +14,7 @@ dt = .1
 RenderView1 = GetRenderView()
 RenderView1.CenterAxesVisibility = 0
 RenderView1.OrientationAxesVisibility = 0
-RenderView1.Background = [0.0, 0.0, 0.0]
+RenderView1.Background = [.333333333333, .3333333333333, .5]
 
 # axis: [Lx,Ly]
 particle_0000 = FindSource("particle_000*")
