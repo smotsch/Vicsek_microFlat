@@ -162,9 +162,9 @@ contains
     !--  boundary condition
     select case (P%boundCond)
     case(1)
-       print *," Boundary condtion    :  reflexive"
-    case(2)
        print *," Boundary condtion    :  periodic"
+    case(2)
+       print *," Boundary condtion    :  reflexive"
     case(3)
        print *," Boundary condtion    :  reflexive-periodic"
     case(4)

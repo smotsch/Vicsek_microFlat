@@ -188,7 +188,7 @@ contains
     Call Div0(f_v,rho,v)
     !- Print the moments
     if (P%isFormatVtk) then
-       Call FilePrintArray2D_vtk(rho,u,v,P%dxy,P%dxy,"../data/rho2D_",.true.,iTime)
+       Call FilePrintArray2D_vtk(rho,u,v,P%Lx/n_x,P%Ly/n_y,"../data/rho2D_",.true.,iTime)
     else
        Call FilePrintArray2D(rho,"../data/rho2D_",.true.,iTime)
        Call FilePrintArray2D(u,"../data/u2D_",.true.,iTime)

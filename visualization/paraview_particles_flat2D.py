@@ -5,10 +5,10 @@ paraview.simple._DisableFirstRenderCameraReset()
 #############################################################
 
 # PARAMETER visu
-Lx = 10
-Ly = 10
+Lx = 3.545
+Ly = 3.545
 scaleU = .1
-dt = .1
+dt = .02
 
 # view
 RenderView1 = GetRenderView()
@@ -29,6 +29,7 @@ Glyph1 = Glyph( GlyphType="Arrow", GlyphTransform="Transform2" )
 Glyph1.Vectors = ['POINTS', 'vectors']
 Glyph1.GlyphType = "2D Glyph"
 Glyph1.GlyphTransform.Scale = [scaleU, scaleU, scaleU]
+Glyph1.RandomMode = 0
 
 DataRepresentation1 = Show()
 Render()

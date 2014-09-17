@@ -3,10 +3,10 @@ except: from paraview.simple import *
 paraview.simple._DisableFirstRenderCameraReset()
 
 # PARAMETER visu
-Lx = 10
-Ly = 10
+Lx = 3.545
+Ly = 3.545
 scaleU = .1
-dt = .1
+dt = .02
 
 
 rho2D_00000 = GetActiveSource()
@@ -58,7 +58,7 @@ DataRepresentation5.EdgeColor = [0.0, 0.0, 0.5000076295109483]
 
 DataRepresentation4.Visibility = 0
 
-WarpByScalar1.ScaleFactor = 40.0
+WarpByScalar1.ScaleFactor = 1.0
 
 GenerateSurfaceNormals1 = GenerateSurfaceNormals()
 
@@ -71,10 +71,10 @@ DataRepresentation6.EdgeColor = [0.0, 0.0, 0.5000076295109483]
 DataRepresentation5.Visibility = 0
 
 # camera
-RenderView6 = GetRenderView()
-RenderView6.CameraPosition = [5.0, -12.0, 21.0]
-RenderView6.CameraViewAngle = 25.0
-RenderView6.CameraFocalPoint = [5.0, 5.0, 0.0]
+# RenderView6 = GetRenderView()
+# RenderView6.CameraPosition = [5.0, -12.0, 21.0]
+# RenderView6.CameraViewAngle = 25.0
+# RenderView6.CameraFocalPoint = [5.0, 5.0, 0.0]
 
 # time scale: dt
 rho2D_0000 = GetActiveSource()
