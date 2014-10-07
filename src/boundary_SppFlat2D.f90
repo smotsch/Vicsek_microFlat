@@ -20,60 +20,54 @@ contains
     Integer                                         :: i0
     Double Precision, PARAMETER                     :: PI = 3.14159265358979323846
 
-    do i0=1,P%N
-       !- Has the particule X_i0 collided with the wall?
-       X_i0 = X(i0,:)
-       V_i0 = V(i0,:)
-       !--  Left wall  --!
-       if (X_i0(1)<0) Then
-          if (P%boundCond==1 .or. P%boundCond==3) Then
-             !- we shift the particle
-             X(i0,1)    = X_i0(1) + P%Lx
-          else
-             !- rebound
-             X(i0,1)    = -X_i0(1)
-             V(i0,1)    = -V_i0(1)
-             theta(i0)  = atan2(V(i0,2),V(i0,1))
-          endif
-       endif
-       !--  Right wall  --!
-       if (X_i0(1)>P%Lx) Then
-          if (P%boundCond==1 .or. P%boundCond==3) Then
-             !- we shift
-             X(i0,1)    = X_i0(1) - P%Lx
-          else
-             !- rebound
-             X(i0,1)    = P%Lx - (X_i0(1) - P%Lx)
-             V(i0,1)    = -V_i0(1)
-             theta(i0)  = atan2(V(i0,2),V(i0,1))
-          endif
-       endif
-       !--  Down wall  --!
-       if (X_i0(2)<0) Then
-          if (P%boundCond==1) Then
-             !- we shift the particle
-             X(i0,2)    = X_i0(2) + P%Ly
-          else
-             !- rebound
-             X(i0,2)    = -X_i0(2)
-             V(i0,2)    = -V_i0(2)
-             theta(i0)  = atan2(V(i0,2),V(i0,1))
-          endif
-       endif
-       !--  Up wall  --!
-       if (X_i0(2)>P%Ly) Then
-          if (P%boundCond==1) Then
-             !- we shift
-             X(i0,2)    = X_i0(2) - P%Ly
-          else
-             !- rebound
-             X(i0,2)    = P%Ly - (X_i0(2) - P%Ly)
-             V(i0,2)    = -V_i0(2)
-             theta(i0)  = atan2(V(i0,2),V(i0,1))
-          endif
-       endif
+    !print *,pack(X(:,1), X(:,1)<0)
 
-    end do
+    select case(P%boundCond)
+    case(1)
+       ! periodic BC
+       X(:,1) = X(:,1) + P%Lx * MERGE( 1, 0, X(:,1)<0 )
+       X(:,1) = X(:,1) - P%Lx * MERGE( 1, 0, X(:,1)>P%Lx)
+       X(:,2) = X(:,2) + P%Ly * MERGE( 1, 0, X(:,2)<0 )
+       X(:,2) = X(:,2) - P%Ly * MERGE( 1, 0, X(:,2)>P%Ly)
+    case(2)
+       ! reflexive BC
+       where (X(:,1)<0)
+          X(:,1) = -X(:,1)
+          V(:,1) = -V(:,1)
+          theta  = atan2(V(:,2),V(:,1))
+       endwhere
+       where (X(:,1)>P%Lx)
+          X(:,1) = P%Lx - (X(:,1) - P%Lx)
+          V(:,1) = -V(:,1)
+          theta  = atan2(V(:,2),V(:,1))
+       endwhere
+       where (X(:,2)<0)
+          X(:,2) = -X(:,2)
+          V(:,2) = -V(:,2)
+          theta  = atan2(V(:,2),V(:,1))
+       endwhere
+       where (X(:,2)>P%Ly)
+          X(:,2) = P%Ly - (X(:,2) - P%Ly)
+          V(:,2) = -V(:,2)
+          theta  = atan2(V(:,2),V(:,1))
+       endwhere
+    case(3)
+       ! periodic in x, reflexive in y
+       X(:,1) = X(:,1) + P%Lx * MERGE( 1, 0, X(:,1)<0 )
+       X(:,1) = X(:,1) - P%Lx * MERGE( 1, 0, X(:,1)>P%Lx)
+       where (X(:,2)<0)
+          X(:,2) = -X(:,2)
+          V(:,2) = -V(:,2)
+          theta  = atan2(V(:,2),V(:,1))
+       endwhere
+       where (X(:,2)>P%Ly)
+          X(:,2) = P%Ly - (X(:,2) - P%Ly)
+          V(:,2) = -V(:,2)
+          theta  = atan2(V(:,2),V(:,1))
+       endwhere
+     
+    end select
+    
   end subroutine Wall
 
 subroutine Wall_Circle(X,V,V_old,theta,P)
