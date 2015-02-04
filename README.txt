@@ -3,7 +3,7 @@
        *                                                *
        *	        for the program                 *
        *                                                *
-       *	            "SppFlat2D"                 *
+       *	            "MicroVic_flat"             *
        *                                                *
        *                Seb, 10/09/2014                 *
        **************************************************
@@ -13,7 +13,7 @@
 -----------------
 You just have to execute the makefile:
  > make
-The compiler creates the executable file"./SppFlat2D" in the folder 'bin'.
+The compiler creates the executable file"./MicroVic_flat" in the folder 'bin'.
 
 Remark: by default, the makefile uses the ifort compiler. If you want to use
 Gfortran, open the 'makefile' and use the instruction written at the bottom. 
@@ -21,16 +21,16 @@ Gfortran, open the 'makefile' and use the instruction written at the bottom.
 
 2) Program execution:
 ---------------------
-To execute the program, you just have to run SppFlat2D:
- > ./SppFlat2D
+To execute the program, you just have to run MicroVic_flat:
+ > ./MicroVic_flat
 The program is going to read the parameters of the model in the files:
-   . PARAMETER_SppFlat2D: for most of the parameters (number of particles, their speed...)
+   . PARAMETER_MicroVic_flat: for most of the parameters (number of particles, their speed...)
    . PARAMETER_init: for the initial condition (uniform, Gaussian...)
 The parameters are written in external files because we do not need to recompile when we
 change one parameter by doing so. The problem with this method is that we have to write
 the value of the parameters at a given line. We cannot add a comment line in the file
-PARAMETER_SppFlat2D, otherwise the numbering is ruined.
- During the execution, the program  "./SppFlat2D" is going to compute the positions (X) and
+PARAMETER_MicroVic_flat, otherwise the numbering is ruined.
+ During the execution, the program  "./MicroVic_flat" is going to compute the positions (X) and
 the velocity (theta) of the particles at each time step using the algorithm describing in
 the article [1]. In the terminal, the program gives some informations about the parameters
 used for the simulation. At the end, it displays the computation time.
@@ -41,19 +41,19 @@ with geometric constraints describing swarming behavior" (2009).
 
 3) Output:
 ----------
-The program SppFlat2D can store two types of data. First, it can save the trajectories and
+The program MicroVic_flat can store two types of data. First, it can save the trajectories and
 the velocities of each particle over time. At each time step, it creates in the directory
 "data" the files:
    . particleX_******     : x coordinate of the particles
    . particleY_******     : y coordinate of the particles
    . particleTheta_****** : velocity angle of the particles,
 with ****** a counter of time step. The program writes only if the parameter
-"isTrajectorySave" is "True" (line 24 in PARAMETER_SppFlat2D).
+"isTrajectorySave" is "True" (line 24 in PARAMETER_MicroVic_flat).
  The other output possibilities are the  "macroscopic" quantities (density, flux,
 global distribution of velocity). Still in the repertory "data", the program can write the
 following files at each time step:
-   . dens1Dx_*, u1Dx_*, v1Dx_* : density and mean velocity in the direction x
-   . dens2D_* , u2D_* , v2D_*  : density and mean velocity in 2D
+   . rho1Dx_*, u1Dx_*, v1Dx_* : density and mean velocity in the direction x
+   . rho2D_* , u2D_* , v2D_*  : density and mean velocity in 2D
    . densTheta_*               : distribution of velocity angle
 To do so, you have to give a strictly positive value for the following parameters:
    . dx : mesh size of the grid in x
@@ -66,20 +66,19 @@ macroscopic quantity. The method used to compute the density is the PIC method
 
 4) Visual output:
 -----------------
-To display the results of the computations, you just have to run the script:
- > Display_SppFlat2D.m
-in the folder 'visualization' with Octave (preferably )or Matlab.
-There are 4 displayed capabilities that are proposed:
- 1) the particles
- 2) the density in 1D (in x)
- 3) the density in  2D
- 4) the particles and the density in 2D
-Of course, you need to have first compute the corresponding quantities with
-"./SppFlat2D".
+To display the results of the computations with Octave
+ > Display_particlesFlat2D.m  ->  plot the particles
+ > Display_macroFlat2D.m      ->  plot the macro. density/velocity
+in the folder 'visualization'.
+To have faster (and nicer) visualization, one can use paraview with the scripts
+ > paraview_density_flat2D.py
+ > paraview_particles_flat2D.py
+It requires to use the option 'T' in the parameter file
+"PARAMETER_MicroVic_flat.txt"line 30. 
 
 5) The parameters:
 ------------------
- PARAMETER_SppFlat2D
+ PARAMETER_MicroVic_flat
    + N          : number of particles
    + c          : speed of the particles
    + nu         : intensity of the relaxation to the mean velocity
@@ -110,18 +109,18 @@ Of course, you need to have first compute the corresponding quantities with
 6) More details about the program:
 ----------------------------------
 The main program is the file:
-  main_SppFlat2D.f90  
+  main_MicroVic_flat.f90  
 It uses different modules (defined in separated files) :
   . toolkit               : contains the usual functions (AngleVec, RandNorm...)
-  . input_output_SppFlat2D      : for the input/output (Lecture, FilePrint...)
-  . boundary_SppFlat2D          : the effect of the wall (Wall)
-  . initial_condition_SppFlat2D : to initialize with the proper initial conditions (InitCond)
+  . input_output_MicroVic_flat      : for the input/output (Lecture, FilePrint...)
+  . boundary_MicroVic_flat          : the effect of the wall (Wall)
+  . initial_condition_MicroVic_flat : to initialize with the proper initial conditions (InitCond)
   . grid_interaction      : to use the super grid (CellNumber, ListAdd...)
-  . interaction_SppFlat2D       : to compute the average velocity around a particle (VelocityAverageFast...)
-  . stat_SppFlat2D              : to compute and save the macroscopic quantities (Moment2D...)
+  . interaction_MicroVic_flat       : to compute the average velocity around a particle (VelocityAverageFast...)
+  . stat_MicroVic_flat              : to compute and save the macroscopic quantities (Moment2D...)
 The architecture of the program is the following:
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  %%    main_SppFlat2D                                                          %%
+  %%    main_MicroVic_flat                                                          %%
   %%      -> declaration of variables                                           %%
   %%      -> lecture of parameters ("Lecture")                                  %%
   %%      -> initialization of variables ("InitCond")                           %%
@@ -136,9 +135,9 @@ The architecture of the program is the following:
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 There is no real subtleties in the program. It has been written to be readable by
 anybody. There are maybe two points which need some explanations:
-  . A structure PARAM_SppFlat2D is used in order to save all the parameters of the model in only
+  . A structure PARAM_MicroVic_flat is used in order to save all the parameters of the model in only
   one variable (just called P). This structure is defined in the file
-  "input_output_SppFlat2D.f90". This avoid to write 36 arguments each time a subroutine is called.
+  "input_output_MicroVic_flat.f90". This avoid to write 36 arguments each time a subroutine is called.
   . The grid method (also called the "Verlet list" by Wikipedia) consists to allocate a
   number at each particle depending on its position on a "virtual grid"
   (PosGrid). Therefore, when we look for the neighbors of a particle, we only have to
