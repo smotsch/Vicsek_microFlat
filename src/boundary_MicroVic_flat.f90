@@ -18,8 +18,6 @@ contains
     TYPE(PARAM_MicroVic_flat), intent(in)           :: P
     Double Precision, PARAMETER                     :: PI = 3.14159265358979323846
 
-    !print *,pack(X(:,1), X(:,1)<0)
-
     select case(P%boundCond)
     case(1)
        ! periodic BC
