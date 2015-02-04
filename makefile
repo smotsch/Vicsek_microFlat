@@ -1,25 +1,25 @@
-############################
-##   Makefile SppFlat2D   ##
-############################
+################################
+##   Makefile MicroVic_flat   ##
+################################
 
 ##----------------------------------------##
 ##         main files to compile          ##
 ##----------------------------------------##
 ## objects
-OBJECTS = toolkit.o             \
-  input_output_SppFlat2D.o      \
-  boundary_SppFlat2D.o          \
-  initial_condition_SppFlat2D.o \
-  grid_interaction.o	        \
-  interaction_SppFlat2D.o       \
-  stat_SppFlat2D.o	        \
-  main_SppFlat2D.o
+OBJECTS = toolkit.o                 \
+  input_output_MicroVic_flat.o      \
+  boundary_MicroVic_flat.o          \
+  initial_condition_MicroVic_flat.o \
+  grid_interaction.o	            \
+  interaction_MicroVic_flat.o       \
+  stat_MicroVic_flat.o	            \
+  main_MicroVic_flat.o
 ## compiler
-CC = ifort
-## options for the compiler (-g for debugger, parano: -check all -warn all), 
-FLAGS = -assume bscc -msse2 -O2
+CC = gfortran
+## options for the compiler (-g for debugger, parano: -check all -warn all),
+FLAGS = -Wall -fbackslash -O2
 ## name of the executable
-EXEC = SppFlat2D
+EXEC = MicroVic_flat
 
 
 ##----------------------------------------##
@@ -48,7 +48,7 @@ $(EXEC): $(OBJECTS)
 	$(CC) $(FLAGS) -o $(EXEC) $(OBJECTS2)
 
 %.o : %.f90
-	$(CC) -c $< -o $(OBJDIR)/$@ -module $(OBJDIR)
+	$(CC) $(FLAGS) -c $^ -o $(OBJDIR)/$@ -J$(OBJDIR)
 
 .PHONY: init_folder init_parameters move clean
 init_folder:
@@ -57,8 +57,8 @@ init_parameters:
 	@if [ ! -f 'bin/PARAMETER_init.txt' ]; then \
 	  cp bin/parameters/PARAMETER_init_bak.txt bin/PARAMETER_init.txt; \
 	fi
-	@if [ ! -f 'bin/PARAMETER_SppFlat2D.txt' ]; then \
-	  cp bin/parameters/PARAMETER_SppFlat2D_bak.txt bin/PARAMETER_SppFlat2D.txt; \
+	@if [ ! -f 'bin/PARAMETER_MicroVic_flat.txt' ]; then \
+	  cp bin/parameters/PARAMETER_MicroVic_flat_bak.txt bin/PARAMETER_MicroVic_flat.txt; \
 	fi
 move:
 	mv $(EXEC) bin
@@ -68,10 +68,9 @@ clean:
 
 
 ##----------------------------------------##
-##      remark: changes for gfortan       ##
+##      remark: changes for ifort         ##
 ##----------------------------------------##
-# 1. CC = gfortran
-# 2. FLAGS2 = -Wall -g -fbackslash -O2
-# 3. $(OBJECTS): %.f90
-# 	$(CC) $(CFLAGS) -c -o $@ $< -J$(OBJDIR)
-
+# 1. CC = ifort
+# 2. FLAGS = -assume bscc -msse2 -O2
+# 3. %.o: %.f90
+#	$(CC) -c $< -o $(OBJDIR)/$@ -module $(OBJDIR)

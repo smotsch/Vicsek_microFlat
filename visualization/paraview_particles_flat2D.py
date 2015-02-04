@@ -5,10 +5,10 @@ paraview.simple._DisableFirstRenderCameraReset()
 #############################################################
 
 # PARAMETER visu
-Lx = 3.545
-Ly = 3.545
-scaleU = .1
-dt = .02
+Lx = 10
+Ly = 10
+scaleU = .2
+dt = .05
 
 # view
 RenderView1 = GetRenderView()

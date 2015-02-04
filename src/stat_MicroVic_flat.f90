@@ -1,4 +1,4 @@
-module stat_SppFlat2D
+module stat_MicroVic_flat
 
   
   !-- contains 
@@ -9,7 +9,7 @@ module stat_SppFlat2D
   !-     DensityPic1D, DensityPic2D
 
   use toolkit                      ! for angle_vec_N, AngleModulo
-  use input_output_SppFlat2D       ! for PARAM_SppFlat2D, FilePrintVector, FilePrint2D
+  use input_output_MicroVic_flat   ! for PARAM_MicroVic_flat, FilePrintVector, FilePrint2D
   
 contains
 
@@ -25,13 +25,13 @@ contains
     implicit none
     Double Precision, dimension(:), intent(in)  :: theta
     Integer                                     :: N
-    Double Precision, dimension(2)              :: meanSppFlat2D
+    Double Precision, dimension(2)              :: meanMicroVic_flat
     Double Precision                            :: GlobalOrder
     !- init
     N = size(theta)
-    meanSppFlat2D = 1d0/N*(/ sum(cos(theta)) , sum(sin(theta)) /)
+    meanMicroVic_flat = 1d0/N*(/ sum(cos(theta)) , sum(sin(theta)) /)
     !- the value
-    GlobalOrder = sqrt( meanSppFlat2D(1)**2 + meanSppFlat2D(2)**2 )
+    GlobalOrder = sqrt( meanMicroVic_flat(1)**2 + meanMicroVic_flat(2)**2 )
 
   endfunction GlobalOrder
 
@@ -75,7 +75,7 @@ contains
     implicit none
     Double Precision, dimension(:), intent(in)    :: X     !!!!! X est unidimensionnel ici
     Double Precision, dimension(:), intent(in)    :: theta
-    TYPE(PARAM_SppFlat2D), intent(in)                :: P
+    TYPE(PARAM_MicroVic_flat), intent(in)         :: P
     Integer, intent(in)                           :: iTime
     Double Precision, dimension(:), allocatable   :: dens_x,f_u_x,u_x,f_v_x,v_x,angle_V
     Integer                                       :: n_x
@@ -143,7 +143,7 @@ contains
     implicit none
     Double Precision, dimension(:,:), intent(in)  :: X     !!!!! X is 2D
     Double Precision, dimension(:), intent(in)    :: theta
-    TYPE(PARAM_SppFlat2D), intent(in)             :: P
+    TYPE(PARAM_MicroVic_flat), intent(in)             :: P
     Integer                                       :: iTime
     Double Precision, dimension(:,:), allocatable :: f_u,f_v
     real(kind=8), dimension(:,:), allocatable     :: rho,u,v
@@ -501,4 +501,4 @@ contains
 
 
 
-end module stat_SppFlat2D
+end module stat_MicroVic_flat

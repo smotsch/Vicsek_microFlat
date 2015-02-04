@@ -1,13 +1,13 @@
-module input_output_SppFlat2D
+module input_output_MicroVic_flat
 
   !-- contains :
-  !--     TYPE PARAM_SppFlat2D, PARAM_InitSppFlat2D
+  !--     TYPE PARAM_MicroVic_flat, PARAM_InitMicroVic_flat
   !--     Lecture, PrintInfo, TestParam
   !--     FilePrintVector, FilePrintArray2D, BarProgress
 
   use toolkit
 
-  TYPE PARAM_SppFlat2D
+  TYPE PARAM_MicroVic_flat
      Integer                            :: N
      Double Precision                   :: c, nu, d, rVision
      Double Precision                   :: Lx, Ly
@@ -23,7 +23,7 @@ module input_output_SppFlat2D
      Double Precision                   :: dx, dxy, dtheta
 
      Integer                            :: nCaseX, nCaseY
-  end TYPE PARAM_SppFlat2D
+  end TYPE PARAM_MicroVic_flat
 
   TYPE PARAM_init
      Logical                            :: readPreviousSimu
@@ -39,19 +39,19 @@ contains
 
   Subroutine Lecture(P,Pinit)
     !- Read the parameters of the simulation from
-    !- the file PARAMETER_SppFlat2D
+    !- the file PARAMETER_MicroVic_flat
     !
     implicit none
-    TYPE(PARAM_SppFlat2D), intent(out)   :: P
-    TYPE(PARAM_init), intent(out)        :: Pinit
+    TYPE(PARAM_MicroVic_flat), intent(out)  :: P
+    TYPE(PARAM_init), intent(out)           :: Pinit
     !- temp
-    character(8)                         :: temp
-    Double Precision, PARAMETER          :: PI = 3.14159265358979323846
+    character(8)                            :: temp
+    Double Precision, PARAMETER             :: PI = 3.14159265358979323846
 
     !----------------------------------------!
     !- 1) Digesting the parameters file...  -!
     !----------------------------------------!
-    open(unit=15,file='PARAMETER_SppFlat2D.txt',status='old')
+    open(unit=15,file='PARAMETER_MicroVic_flat.txt',status='old')
 
     read(15,*)temp
     read(15,*)temp
@@ -141,7 +141,7 @@ contains
     !- Write the parameters in the terminal during the simulation
     !
     implicit none
-    TYPE(PARAM_SppFlat2D), intent(in)               :: P
+    TYPE(PARAM_MicroVic_flat), intent(in)               :: P
     Double Precision, PARAMETER                     :: PI = 3.14159265358979323846
 
     !-----  Information on the terminal  -----!
@@ -215,7 +215,7 @@ contains
 
   Subroutine TestParameter(P)
     !- Check if the parameters are not crazy...
-    TYPE(PARAM_SppFlat2D), intent(in)      :: P
+    TYPE(PARAM_MicroVic_flat), intent(in)      :: P
     !- Some tests
     If (P%N>1d6) Then
        print *,"Warning : the number of particles is too large for 'FilePrint' (maximum 1 million)"
@@ -335,21 +335,19 @@ contains
     fileName_ext = trim(fileName)//trim(cNbIteration)//cFormat
 
     allocate(uv_combined(3,(n_x+1)*(n_y+1)))
-    uv_combined(1,:) = pack(u,.true.) !real( reshape( u  )
-    uv_combined(2,:) = pack(v,.true.)
+    uv_combined(1,:) = pack(real(u),.true.) !real( reshape( u  )
+    uv_combined(2,:) = pack(real(v),.true.)
     uv_combined(3,:) = 0
 
     !- Open and write
     if (isUnFormatted) then
        ! binary format
        open(unit       = 10,       &
-            file       = trim(fileName_ext), &
-            form       = 'UNFORMATTED',  &
-            access     = 'SEQUENTIAL',   &
-            action     = 'WRITE',        &
-            convert    = 'BIG_ENDIAN',   &
-            recordtype = 'STREAM',       &
-            buffered   = 'YES')
+         file       = trim(fileName_ext), &
+         form       = 'UNFORMATTED', &
+         access     = 'STREAM', &
+         action     = 'WRITE',        &
+         convert    = 'BIG_ENDIAN')
     else    
        Open(Unit=10,file=fileName_ext)
 20     format(100000(I5))
@@ -450,20 +448,18 @@ contains
        fileName_ext = trim(fileName)//'_bin.vtk'
     endif
     allocate(X_3D(N,3),V_3D(N,3))
-    X_3D(:,1:2) = X
+    X_3D(:,1:2) = real(X)
     X_3D(:,3)   = 0
-    V_3D(:,1:2) = V
+    V_3D(:,1:2) = real(V)
     V_3D(:,3)   = 0
     
     !- Open and write
     open(unit       = 10,       &
          file       = trim(fileName_ext), &
-         form       = 'UNFORMATTED',  &
-         access     = 'SEQUENTIAL',   &
+         form       = 'UNFORMATTED', &
+         access     = 'STREAM', &
          action     = 'WRITE',        &
-         convert    = 'BIG_ENDIAN',   &
-         recordtype = 'STREAM',       &
-         buffered   = 'YES')
+         convert    = 'BIG_ENDIAN')
     write(10) "# vtk DataFile Version 1.0"//newline
     write(10) "Unstructured Grid particles"//newline
     write(10) "BINARY"//newline
@@ -550,4 +546,4 @@ contains
   End subroutine BarProgress
 
 
-end module input_output_SppFlat2D
+end module input_output_MicroVic_flat

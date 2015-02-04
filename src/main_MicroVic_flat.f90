@@ -1,18 +1,18 @@
-Program SppFlat2D
+Program MicroVic_flat
 
   use toolkit
-  use input_output_SppFlat2D
-  use boundary_SppFlat2D
-  use initial_condition_SppFlat2D
+  use input_output_MicroVic_flat
+  use boundary_MicroVic_flat
+  use initial_condition_MicroVic_flat
   use grid_interaction
-  use interaction_SppFlat2D
-  use stat_SppFlat2D
+  use interaction_MicroVic_flat
+  use stat_MicroVic_flat
   
   implicit none
   
   !--------------  Declaration of variables  --------------!
   !--------------------------------------------------------!
-  TYPE(PARAM_SppFlat2D)                         :: P
+  TYPE(PARAM_MicroVic_flat)                     :: P
   TYPE(PARAM_init)                              :: Pinit
   Integer                                       :: N
   Double Precision, Dimension(:,:), Allocatable :: X, V, V_ave, V_old, B
@@ -212,4 +212,4 @@ Program SppFlat2D
   print *,""
 
   
-End Program SppFlat2D
+End Program MicroVic_flat

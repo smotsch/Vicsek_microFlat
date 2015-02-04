@@ -15,7 +15,7 @@ shouldPlotEnd = 0;
 
 %%------------------ 0.1) Read parameters ------------------%%
 %%----------------------------------------------------------%%
-fid = fopen("../bin/PARAMETER_SppFlat2D.txt");
+fid = fopen("../bin/PARAMETER_MicroVic_flat.txt");
 for i=1:4
   temp = fgetl(fid);
 endfor

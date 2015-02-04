@@ -1,12 +1,12 @@
-module interaction_SppFlat2D
+module interaction_MicroVic_flat
 
   !-- contains :
   !       TestNeighbor
   !       VelocityAverageSlow
   !       VelocityAverageFast
 
-  use toolkit                   ! for AngleVec
-  use input_output_SppFlat2D       ! for PARAM_SppFlat2D
+  use toolkit                     ! for AngleVec
+  use input_output_MicroVic_flat  ! for PARAM_MicroVic_flat
   use grid_interaction
 
 contains
@@ -27,7 +27,7 @@ contains
     !- Compute the average velocity V_ave with the "slow" technic of order O(N^2)
     implicit none
     Double Precision, Dimension(:,:), intent(in)  :: X, V
-    TYPE(PARAM_SppFlat2D), intent(in)             :: P
+    TYPE(PARAM_MicroVic_flat), intent(in)         :: P
     Double Precision, Dimension(:,:), intent(out) :: V_ave
     Double Precision, Dimension(2)                :: X_i0, X_j
     Integer                                       :: i0,j
@@ -82,7 +82,7 @@ contains
     !
     implicit none
     Double Precision, Dimension(:,:), intent(in)  :: X, V
-    TYPE(PARAM_SppFlat2D), intent(in)             :: P
+    TYPE(PARAM_MicroVic_flat), intent(in)         :: P
     Integer, Dimension(:), intent(in)             :: posGrid, firstParticleGrid
     Integer, Dimension(:), intent(in)             :: verletListNext
     Double Precision, Dimension(:,:), intent(out) :: V_ave
@@ -160,4 +160,4 @@ contains
   end subroutine VelocityAverageFast
   
 
-end module interaction_SppFlat2D
+end module interaction_MicroVic_flat

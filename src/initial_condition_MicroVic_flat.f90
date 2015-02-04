@@ -1,11 +1,11 @@
-module initial_condition_SppFlat2D
+module initial_condition_MicroVic_flat
 
   !-- contains :
   !       InitCond
 
   
-  use toolkit                   ! for random
-  use input_output_SppFlat2D       ! for PARAM_SppFlat2D
+  use toolkit                      ! for random
+  use input_output_MicroVic_flat   ! for PARAM_MicroVic_flat
 
 contains
 
@@ -14,7 +14,7 @@ contains
     implicit none
     Double Precision, Dimension(:,:), intent(out)   :: X
     Double Precision, Dimension(:), intent(out)     :: theta
-    TYPE(PARAM_SppFlat2D), intent(in)               :: P
+    TYPE(PARAM_MicroVic_flat), intent(in)           :: P
     TYPE(PARAM_init), intent(in)                    :: Pinit
     Double Precision, Dimension(2)                  :: center
     Integer                                         :: i0
@@ -136,4 +136,4 @@ contains
 
   end subroutine InitCond
 
-end module initial_condition_SppFlat2D
+end module initial_condition_MicroVic_flat

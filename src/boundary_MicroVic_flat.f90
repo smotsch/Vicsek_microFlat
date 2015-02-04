@@ -1,9 +1,9 @@
-module boundary_SppFlat2D
+module boundary_MicroVic_flat
 
   !-- contains :
   !       Wall
 
-  use input_output_SppFlat2D          ! for PARAM_SppFlat2D
+  use input_output_MicroVic_flat          ! for PARAM_MicroVic_flat
 
 contains
 
@@ -15,9 +15,7 @@ contains
     Double Precision, Dimension(:,:), intent(inout) :: X
     Double Precision, Dimension(:,:), intent(inout) :: V
     Double Precision, dimension(:), intent(inout)   :: theta
-    TYPE(PARAM_SppFlat2D), intent(in)               :: P
-    Double Precision, dimension(2)                  :: X_i0,V_i0
-    Integer                                         :: i0
+    TYPE(PARAM_MicroVic_flat), intent(in)           :: P
     Double Precision, PARAMETER                     :: PI = 3.14159265358979323846
 
     !print *,pack(X(:,1), X(:,1)<0)
@@ -79,7 +77,7 @@ subroutine Wall_Circle(X,V,V_old,theta,P)
   Double Precision, Dimension(:,:), intent(inout) :: V
   Double Precision, Dimension(:,:), intent(in)    :: V_old
   Double Precision, dimension(:), intent(inout)   :: theta
-  TYPE(PARAM_SppFlat2D), intent(in)               :: P
+  TYPE(PARAM_MicroVic_flat), intent(in)               :: P
   Double Precision, dimension(2)                  :: X_i0,V_i0,V_m,X_star,eta
   Double Precision                                :: a,b,r2_i0,aa,bb,cc,t,scalar_prod
   Integer                                         :: i0
@@ -120,4 +118,4 @@ subroutine Wall_Circle(X,V,V_old,theta,P)
 end subroutine Wall_Circle
 
   
-end module boundary_SppFlat2D
+end module boundary_MicroVic_flat

@@ -5,7 +5,7 @@ module grid_interaction
   !       ListAdd, ListRemove
   !       InitVerletList
 
-  use input_output_SppFlat2D          ! for TYPE(PARAM_SppFlat2D)
+  use input_output_MicroVic_flat          ! for TYPE(PARAM_MicroVic_flat)
   
 contains
 
@@ -14,7 +14,7 @@ contains
     !
     implicit none
     Double Precision, Dimension(2), intent(in) :: X_i0
-    TYPE(PARAM_SppFlat2D), intent(in)          :: P
+    TYPE(PARAM_MicroVic_flat), intent(in)      :: P
     Integer                                    :: i_grid, j_grid
     Double Precision                           :: dx, dy
     Integer                                    :: CellNumber
@@ -110,7 +110,7 @@ contains
     !
     implicit none
     Double Precision, Dimension(:,:), intent(in) :: X
-    Type(PARAM_SppFlat2D), intent(in)            :: P
+    Type(PARAM_MicroVic_flat), intent(in)        :: P
     Integer, Dimension(:), intent(out)           :: PosGrid,firstParticleGrid
     Integer, Dimension(:), intent(out)           :: verletListPrev,verletListNext
     Integer                                      :: i0, k_i0
