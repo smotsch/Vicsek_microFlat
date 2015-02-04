@@ -5,7 +5,7 @@
        *                                                *
        *	            "MicroVic_flat"             *
        *                                                *
-       *                Seb, 10/09/2014                 *
+       *                Seb, 02/02/2015                 *
        **************************************************
 
        
@@ -36,7 +36,7 @@ the article [1]. In the terminal, the program gives some informations about the 
 used for the simulation. At the end, it displays the computation time.
 
 [1] S. Motsch, L. Navoret, "Numerical simulations of a non-conservative hyperbolic system
-with geometric constraints describing swarming behavior" (2009).
+with geometric constraints describing swarming behavior" (2011).
 
 
 3) Output:
