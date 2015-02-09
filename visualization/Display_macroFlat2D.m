@@ -170,7 +170,7 @@ for iTime=0:jumpPrint:nTime	# Warning: rm images/*
       legend("mass","theta","energy")
       %% save ?
       if shouldSave==1
-	l = ["../images/density1Dx_" , num2str(iTime,"%09d") , ".png"];
+	l = ["images/density1Dx_" , num2str(iTime,"%09d") , ".png"];
 	print(sprintf(l),"-S800,800");
       endif
     case 2
@@ -206,7 +206,7 @@ for iTime=0:jumpPrint:nTime	# Warning: rm images/*
       ylabel("y",'fontsize',18);
       %% save ?
       if shouldSave==1
-	l = ["../images/density2D_",num2str(iTime,"%09d"),".png"];
+	l = ["images/density2D_",num2str(iTime,"%09d"),".png"];
 	##print(sprintf(l),"-S800,800");
 	print(sprintf(l));
 	close all
@@ -233,7 +233,7 @@ for iTime=0:jumpPrint:nTime	# Warning: rm images/*
       title(["t = ",num2str(iTime*dt,"%10.2f")],'fontsize',24)
       %% save ?
       if shouldSave==1
-	l = ["../images/densityTheta_" , num2str(iTime,"%09d") , ".png"];
+	l = ["images/densityTheta_" , num2str(iTime,"%09d") , ".png"];
 	print(sprintf(l));
       endif
       
@@ -257,14 +257,14 @@ if (shouldSave==1)
 	       num2str(timeNow(5),"%02d")];
   switch choiceDensity
     case(1)
-      name = ["../videos/density1DxMicro_",extension,".avi"];
-      system(["mencoder ''mf://../images/density1Dx_*.png'' -mf fps=25 -o ",name," -ovc lavc -lavcopts vcodec=mpeg4"]);
+      name = ["videos/density1DxMicro_",extension,".avi"];
+      system(["mencoder ''mf://images/density1Dx_*.png'' -mf fps=25 -o ",name," -ovc lavc -lavcopts vcodec=mpeg4"]);
     case(2)
       name = ["../videos/density2DMicro_",extension,".avi"];
-      system(["mencoder ''mf://../images/density2D_*.png'' -mf fps=25 -o ",name," -ovc lavc -lavcopts vcodec=mpeg4"]);
+      system(["mencoder ''mf://images/density2D_*.png'' -mf fps=25 -o ",name," -ovc lavc -lavcopts vcodec=mpeg4"]);
     case(3)
       name = ["../videos/densityTheta_",extension,".avi"];
-      system(["mencoder ''mf://../images/densityTheta_*.png'' -mf fps=25 -o ",name," -ovc lavc -lavcopts vcodec=mpeg4"]);
+      system(["mencoder ''mf://images/densityTheta_*.png'' -mf fps=25 -o ",name," -ovc lavc -lavcopts vcodec=mpeg4"]);
   endswitch
 else
   pause

@@ -9,7 +9,7 @@ lengthArrow = .1;		# the arrows
 headSize    = .1;
 
 shouldSave  = 0;
-shouldPlotEnd = 0;
+shouldPlotEnd = 1;
 
 
 %%------------------ 0.1) Read parameters ------------------%%
@@ -169,3 +169,12 @@ endif
 #mencoder "mf://melange*.png" -mf fps=15 -o ../output.avi -ovc lavc -lavcopts vcodec=mpeg4
 
 
+break
+
+## estimation of the radial distribution
+l = max([abs(particleX-5);abs(particleY-5)]);
+intR = .25:.5:4.75;
+temp = 0:.5:5;
+dl = 4*(temp(2:(end)).^2 - temp(1:(end-1)).^2);
+z = hist(l,intR)./dl;
+plot(intR,z)

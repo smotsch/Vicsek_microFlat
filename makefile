@@ -52,7 +52,7 @@ $(EXEC): $(OBJECTS)
 
 .PHONY: init_folder init_parameters move clean
 init_folder:
-	mkdir -p $(OBJDIR) data images videos
+	mkdir -p $(OBJDIR) data visualization/images visualization/videos
 init_parameters:
 	@if [ ! -f 'bin/PARAMETER_init.txt' ]; then \
 	  cp bin/parameters/PARAMETER_init_bak.txt bin/PARAMETER_init.txt; \

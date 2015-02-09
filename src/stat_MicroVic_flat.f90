@@ -150,23 +150,23 @@ contains
     Integer                                       :: n_x,n_y
 
     !- Init
-    n_x = floor(P%Lx/P%dxy)+1
-    n_y = floor(P%Ly/P%dxy)+1
+    n_x = floor(P%Lx/P%dxy + .5) !+1   ! for NGP
+    n_y = floor(P%Ly/P%dxy + .5) !+1   ! for NPG
     allocate(rho(n_x,n_y),f_u(n_x,n_y),u(n_x,n_y),f_v(n_x,n_y),v(n_x,n_y))
     
     !- Compute densities with PIC method
-    Call DensityPic2D(0d0,P%Lx,0d0,P%Ly,&
-         X(:,1), X(:,2), rho)
-    Call DensityPic2D(0d0,P%Lx,0d0,P%Ly,&
-         X(:,1), X(:,2), f_u, cos(theta))
-    Call DensityPic2D(0d0,P%Lx,0d0,P%Ly,&
-         X(:,1), X(:,2), f_v, sin(theta))
-    ! Call DensityNGP2D(0d0,P%Lx,0d0,P%Ly,&
+    ! Call DensityPic2D(0d0,P%Lx,0d0,P%Ly,&
     !      X(:,1), X(:,2), rho)
-    ! Call DensityNGP2D(0d0,P%Lx,0d0,P%Ly,&
+    ! Call DensityPic2D(0d0,P%Lx,0d0,P%Ly,&
     !      X(:,1), X(:,2), f_u, cos(theta))
-    ! Call DensityNGP2D(0d0,P%Lx,0d0,P%Ly,&
+    ! Call DensityPic2D(0d0,P%Lx,0d0,P%Ly,&
     !      X(:,1), X(:,2), f_v, sin(theta))
+    Call DensityNGP2D(0d0,P%Lx,0d0,P%Ly,&
+         X(:,1), X(:,2), rho)
+    Call DensityNGP2D(0d0,P%Lx,0d0,P%Ly,&
+         X(:,1), X(:,2), f_u, cos(theta))
+    Call DensityNGP2D(0d0,P%Lx,0d0,P%Ly,&
+         X(:,1), X(:,2), f_v, sin(theta))
     !- Change the values at the boundaries if necessary
     if (P%boundCond==1 .or. P%boundCond==3) Then
        rho(1,:)    = (rho(1,:)+rho(n_x,:))/2d0
