@@ -43,12 +43,7 @@ contains
           X_j  = X(j,:)
           !- Take care of the periodic boundary condiiton
           select case (P%boundCond)
-          case(2)
-             !- Periodic only in x
-             if (abs(X_j(1)-X_i0(1))>P%Lx/2) Then
-                X_j(1) = X_j(1) - P%Lx*sign(1d0,X_j(1)-X_i0(1))
-             endif
-          case(3)
+          case(1)
              !- Periodic in x
              if (abs(X_j(1)-X_i0(1))>P%Lx/2) Then
                 X_j(1) = X_j(1) - P%Lx*sign(1d0,X_j(1)-X_i0(1))
@@ -56,6 +51,11 @@ contains
              !- Periodic in y
              if (abs(X_j(2)-X_i0(2))>P%Ly/2) Then
                 X_j(2) = X_j(2) - P%Ly*sign(1d0,X_j(2)-X_i0(2))
+             endif
+          case(3)
+             !- Periodic only in x
+             if (abs(X_j(1)-X_i0(1))>P%Lx/2) Then
+                X_j(1) = X_j(1) - P%Lx*sign(1d0,X_j(1)-X_i0(1))
              endif
           end select
 
@@ -111,16 +111,16 @@ contains
              ! ******* boundary conditions
              ii = i_g     ;  jj = j_g
              dec_x = 0d0  ;  dec_y = 0d0
-             if (ii==0 .and. (P%boundCond==2 .or. P%boundCond==3)) Then
+             if (ii==0 .and. (P%boundCond==1 .or. P%boundCond==3)) Then
                 ii = P%nCaseX ; dec_x = -P%Lx
              endif
-             if (ii==(P%nCaseX+1) .and. (P%boundCond==2 .or. P%boundCond==3)) Then
+             if (ii==(P%nCaseX+1) .and. (P%boundCond==1 .or. P%boundCond==3)) Then
                 ii = 1      ; dec_x =  P%Lx
              endif
-             if (jj==0 .and. P%boundCond==3) Then
+             if (jj==0 .and. P%boundCond==1) Then
                 jj = P%nCaseY ; dec_y = -P%Ly
              endif
-             if (jj==(P%nCaseY+1) .and. P%boundCond==3) Then
+             if (jj==(P%nCaseY+1) .and. P%boundCond==1) Then
                 jj = 1      ; dec_y =  P%Ly
              endif
              !- Summing

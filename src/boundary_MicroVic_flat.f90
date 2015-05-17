@@ -16,7 +16,6 @@ contains
     Double Precision, Dimension(:,:), intent(inout) :: V
     Double Precision, dimension(:), intent(inout)   :: theta
     TYPE(PARAM_MicroVic_flat), intent(in)           :: P
-    Double Precision, PARAMETER                     :: PI = 3.14159265358979323846
 
     select case(P%boundCond)
     case(1)
@@ -79,7 +78,6 @@ subroutine Wall_Circle(X,V,V_old,theta,P)
   Double Precision, dimension(2)                  :: X_i0,V_i0,V_m,X_star,eta
   Double Precision                                :: a,b,r2_i0,aa,bb,cc,t,scalar_prod
   Integer                                         :: i0
-  Double Precision, PARAMETER                     :: PI = 3.14159265358979323846
 
   ! init
   a = P%Lx/2
