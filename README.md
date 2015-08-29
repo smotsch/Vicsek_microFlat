@@ -1,6 +1,5 @@
-README file for MicroVic_flat (Seb, 08/29/2015)
-===============================================
-
+Program *MicroVic_flat*
+=======================
 
 **Table of Contents**
 - [Installation](#installation)
@@ -159,4 +158,4 @@ is spectacular.
 
  This (modest) program is distributed under the GNU GPL license version 2. More
 information are available in the file COPYING.txt. For any information or bugs,
-please contact me at: <smotsch at asu.edu>.
+please contact me at: `smotsch[at]asu.edu`.

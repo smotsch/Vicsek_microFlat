@@ -187,7 +187,7 @@ Program MicroVic_flat
      globalOrderList(iStep+1) = GlobalOrder(theta)     
 
      !- progress...
-     !Call BarProgress(iStep,P%nSteps)
+     Call BarProgress(iStep,nSteps)
   End do
   
   !---------------------------------------------------------------!

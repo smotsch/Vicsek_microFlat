@@ -30,7 +30,7 @@ T
 F
 ## Macro quantities (dx, dxy, dtheta)
 0
-.25
+.5
 0
 ## jumpPrint ? (1 no jump)
 2
