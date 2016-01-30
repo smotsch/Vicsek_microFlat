@@ -17,6 +17,8 @@ module input_output_MicroVic_flat
      Integer                            :: numericalScheme
      Logical                            :: isGrid
      Logical                            :: isInitRand
+     Integer                            :: nbSeed
+     Character(len=80)                  :: strSeed
      Logical                            :: isTrajectorySave
      Logical                            :: isFormatVtk
      Integer                            :: jumpPrint
@@ -45,7 +47,7 @@ contains
     TYPE(PARAM_MicroVic_flat), intent(out)  :: P
     TYPE(PARAM_init), intent(out)           :: Pinit
     !- temp
-    character(8)                            :: temp
+    character(15)                           :: temp,tpStr
     Double Precision, PARAMETER             :: PI = 3.14159265358979323846
 
     !----------------------------------------!
@@ -80,6 +82,7 @@ contains
     read(15,*)P%isGrid
     read(15,*)temp
     read(15,*)P%isInitRand
+    read(15,*)P%nbSeed
     read(15,*)temp
     read(15,*)P%isTrajectorySave
     read(15,*)temp
@@ -94,9 +97,14 @@ contains
     close(unit=15)
 
     !- extra term
-    P%nCaseX = floor( P%Lx/P%rVision )
-    P%nCaseY = floor( P%Ly/P%rVision )
-
+    P%nCaseX  = floor( P%Lx/P%rVision )
+    P%nCaseY  = floor( P%Ly/P%rVision )
+    if (P%isInitRand) then
+       P%strSeed = ""
+    else
+       write(tpStr , *) P%nbSeed
+       P%strSeed = "seed"//trim(adjustl(tpStr))//"_"
+    end if
 
     !---------------------------!
     !- 2) Digesting the IC...  -!
@@ -168,6 +176,8 @@ contains
     case(3)
        print *," Boundary condtion    :  reflexive-periodic"
     case(4)
+       print *," Boundary condtion    :  periodic-reflexive"
+    case(5)
        print *," Boundary condtion    :  ellipse"
     case default
        print *, "  Incorrect choice for the boundary condition."

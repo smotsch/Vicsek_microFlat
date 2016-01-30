@@ -4,9 +4,9 @@
 
 %% Parameters visualisation
 lengthArrow = .1;		% the arrows
-headSize    = .1;
+headSize    = .05;
 
-shouldSave  = 0;
+shouldSave  = 1;
 shouldPlotEnd = 0;
 
 
@@ -23,7 +23,7 @@ stringTrajectorySave = C{1}{28};
 dx        = str2num(C{1}{32});
 dxy       = str2num(C{1}{33});
 dtheta    = str2num(C{1}{34});
-jumpPrint = str2num(C{1}{36});
+jumpPrint = str2num(C{1}{37});
 fclose(fid);
 
 %%------------------ 0.2) Initialisation ------------------%%
@@ -59,8 +59,8 @@ endfunction
 
 %% init the figure
 if (shouldSave==1)
-  figure('visible','off')
-  system('rm images/particles*')
+    %figure('visible','off')
+    system('rm images/particles*')
 else
   figure('visible','on')
 end
@@ -82,11 +82,14 @@ for iStep=0:jumpPrint:nTime	% Warning: rm images/*
   particleY     = loadBinary(['../data/particleY_' , num2str(iStep,'%09d'),'.udat']);
   particleTheta = loadBinary(['../data/particleTheta_' , num2str(iStep,'%09d'),'.udat']);
   %%---- B) plot data ----%%
+  %%particleX	  = particleX(1:2000);
+  %%particleY	  = particleY(1:2000);
+  %%particleTheta = particleTheta(1:2000);
   %% cross or arrow
   if (lengthArrow==0)
     plot(particleX,particleY,'+b')
   else
-    h = quiver(particleX,particleY,lengthArrow*cos(particleTheta),lengthArrow*sin(particleTheta),'linewidth',2,'AutoScale','off');
+    h = quiver(particleX,particleY,lengthArrow*cos(particleTheta),lengthArrow*sin(particleTheta),'linewidth',1,'AutoScale','off');
     set(h,'maxheadsize', headSize);
   end
   if (BC==5)
@@ -97,17 +100,18 @@ for iStep=0:jumpPrint:nTime	% Warning: rm images/*
   %% deco
   legend('off')
   axis([0 Lx 0 Ly],'equal');
-  title(['Particles (N = ',num2str(length(particleX)),')  at  t = ',num2str(iStep*dt,'%10.2f')],'fontsize',24)
-  xlabel('x','fontsize',26)
-  ylabel('y','fontsize',26)
-  set(gca,'FontSize',18)
+  %title(['Particles (N = ',num2str(length(particleX)),')  at  t = ',num2str(iStep*dt,'%10.2f')],'fontsize',24)
+  title(['Particles at  t = ',num2str(iStep*dt,'%10.2f')],'fontsize',40)
+  xlabel('x','fontsize',36)
+  ylabel('y','fontsize',36)
+  set(gca,'FontSize',30)
   %% save ?
   if (shouldSave==1)
     l = ['images/particles_' , num2str(iStep,'%09d') , '.png'];
-    print(sprintf(l))
-  else
-    pause(.01)
+    print(sprintf(l),'-S740,740');
+    %%print(sprintf(l))
   end
+  pause(.01)
 end
 
 toc

@@ -57,6 +57,11 @@ contains
              if (abs(X_j(1)-X_i0(1))>P%Lx/2) Then
                 X_j(1) = X_j(1) - P%Lx*sign(1d0,X_j(1)-X_i0(1))
              endif
+          case(4)
+             !- Periodic only in y
+             if (abs(X_j(2)-X_i0(2))>P%Ly/2) Then
+                X_j(2) = X_j(2) - P%Ly*sign(1d0,X_j(2)-X_i0(2))
+             endif
           end select
 
           !- X_j is now the position of j in the reference of i0
@@ -117,10 +122,10 @@ contains
              if (ii==(P%nCaseX+1) .and. (P%boundCond==1 .or. P%boundCond==3)) Then
                 ii = 1      ; dec_x =  P%Lx
              endif
-             if (jj==0 .and. P%boundCond==1) Then
+             if (jj==0 .and. (P%boundCond==1 .or. P%boundCond==4)) Then
                 jj = P%nCaseY ; dec_y = -P%Ly
              endif
-             if (jj==(P%nCaseY+1) .and. P%boundCond==1) Then
+             if (jj==(P%nCaseY+1) .and. (P%boundCond==1 .or. P%boundCond==4)) Then
                 jj = 1      ; dec_y =  P%Ly
              endif
              !- Summing

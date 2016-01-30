@@ -27,6 +27,8 @@ contains
 
     if (P%isInitRand) Then
        Call InitRandomSeed()
+    else
+       Call InitRandomSeed(P%nbSeed)
     endif
     ! init for ellipse IC
     a = P%Lx/2
@@ -94,7 +96,7 @@ contains
              end select
              !- Test if the position of the particle is in the box
              !----------------------------------------------------
-             if (P%boundCond==4) Then
+             if (P%boundCond==5) Then
                 r2_i0 = (X_i0(1)-a)**2/a**2 + (X_i0(2)-b)**2/b**2
                 if (r2_i0<1) Then
                    isInsideDomain = .true.

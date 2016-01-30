@@ -4,10 +4,10 @@
 
 %% Parameters visualisation
 choiceDensity = 2;		% 1: ρ(x),u(x)  2: ρ(x,y),u(x,y) 3: g(θ)
-lengthArrow2D = .3;	        % for 2: ρ(x,y),u(x,y)
+lengthArrow2D = .2;	        % for 2: ρ(x,y),u(x,y)
 isTheoricCurveTheta = 0;	% for 3: g(θ)
 
-shouldSave    = 0;
+shouldSave    = 1;
 shouldPlotEnd = 0;
 
 
@@ -22,7 +22,7 @@ Time      = str2num(C{1}{19});
 dx        = str2num(C{1}{32});
 dxy       = str2num(C{1}{33});
 dtheta    = str2num(C{1}{34});
-jumpPrint = str2num(C{1}{36});
+jumpPrint = str2num(C{1}{37});
 fclose(fid);
 
 
@@ -57,7 +57,7 @@ switch(choiceDensity)
     A_hot   = [l_red',l_green',l_blue'];
     %% parameters
     zMin = 0;
-    zMax = .05;
+    zMax = 0.05;
   case 3
     %% Density in θ
     nTheta   = floor(2*pi/dtheta);
@@ -73,8 +73,8 @@ end
 
 %% init the figure
 if (shouldSave==1)
-    figure('visible','off')
-    system('rm images/density*')
+    %figure('visible','off')
+    %system('rm images/density*')
 else
     figure('visible','on')
 end
@@ -162,23 +162,24 @@ for iTime=0:jumpPrint:nTime	% Warning: rm images/*
         hold on
         imagesc(intX,intY,rho2D');
         set(gca,'YDir','normal')
-        h = quiver(intX,intY,lengthArrow2D*u2D',lengthArrow2D*v2D','linewidth',3,'autoScale','off'); % imagesc: u,v inverse
+        h = quiver(intX,intY,lengthArrow2D*u2D',lengthArrow2D*v2D','linewidth',1,'autoScale','off'); % imagesc: u,v inverse
         set (h, 'maxheadsize', .3);
         hold off
         %% deco
-        title(['Density and velocity at  t = ',num2str(iTime*dt,'%10.2f')],'fontsize',14)
-        axis([0 Lx 0 Ly],'equal')
+        title(['Density and velocity at  t = ',num2str(iTime*dt,'%10.2f')],'fontsize',40)
         colormap(A_hot);
         caxis([zMin zMax])
         c = colorbar;
-        xlabel('x','fontsize',18);
-        ylabel('y','fontsize',18);
+        xlabel('x','fontsize',36);
+        ylabel('y','fontsize',36);
+        set(gca,'FontSize',30)
+        axis([0 Lx 0 Ly],'equal')
         %% save ?
         if shouldSave==1
             l = ['images/density2D_',num2str(iTime,'%09d'),'.png'];
-            %%print(sprintf(l),'-S800,800');
-            print(sprintf(l));
-            close all
+            print(sprintf(l),'-S1000,800');
+            %%print(sprintf(l));
+            %%close all
         end
       case 3
         %% Density θ
@@ -208,7 +209,7 @@ for iTime=0:jumpPrint:nTime	% Warning: rm images/*
         
     end
 
-    pause(.001)		% small break (to see something...)
+    pause(.1)		% small break (to see something...)
 end
 
 %%---------------------------------------------------------------%%

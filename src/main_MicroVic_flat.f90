@@ -22,6 +22,7 @@ Program MicroVic_flat
   Integer, Dimension(:), Allocatable            :: posGrid, firstParticleGrid
   Integer, Dimension(:), Allocatable            :: verletListPrev, verletListNext
   Integer                                       :: iStep,nSteps
+  Character(80)                                 :: nameFile
   Double Precision                              :: sq_2d_dt,stdNoise
   Integer                                       :: i0, i0PosGrid, i0PosGrid_old
   Real                                          :: start, finish
@@ -69,7 +70,7 @@ Program MicroVic_flat
   if (P%isTrajectorySave) then
      !- Write the intial condition
      if (P%isFormatVtk) then
-        Call FilePrintParticle_vtk(X,V,"../data/particle_",0)
+        Call FilePrintParticle_vtk(X,V,"../data/particle_"//P%strSeed,0)
      else
         Call FilePrintVector(X(:,1),"../data/particleX_",.true.,0)
         Call FilePrintVector(X(:,2),"../data/particleY_",.true.,0)
@@ -140,7 +141,7 @@ Program MicroVic_flat
      !- update X
      X = X + P%c*P%dt/2*(V_old + V)
      !- The particles may have smashed the wall...
-     if (P%boundCond==4) Then
+     if (P%boundCond==5) Then
         Call Wall_Circle(X,V,V_old,theta,P)
      else
         Call Wall(X,V,theta,P)
@@ -172,7 +173,7 @@ Program MicroVic_flat
         if (P%isTrajectorySave) then
            !- print particles
            if (P%isFormatVtk) then
-              Call FilePrintParticle_vtk(X,V,"../data/particle_",iStep)
+              Call FilePrintParticle_vtk(X,V,"../data/particle_"//P%strSeed,iStep)
            else
               Call FilePrintVector(X(:,1),"../data/particleX_",.true.,iStep)
               Call FilePrintVector(X(:,2),"../data/particleY_",.true.,iStep)

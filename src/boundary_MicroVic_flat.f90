@@ -60,6 +60,20 @@ contains
           V(:,2) = -V(:,2)
           theta  = atan2(V(:,2),V(:,1))
        endwhere
+    case(4)
+       ! reflexive in x, periodic in y
+       X(:,2) = X(:,2) + P%Ly * MERGE( 1, 0, X(:,2)<0 )
+       X(:,2) = X(:,2) - P%Ly * MERGE( 1, 0, X(:,2)>P%Ly)
+       where (X(:,1)<0)
+          X(:,1) = -X(:,1)
+          V(:,1) = -V(:,1)
+          theta  = atan2(V(:,2),V(:,1))
+       endwhere
+       where (X(:,1)>P%Lx)
+          X(:,1) = P%Lx - (X(:,1) - P%Lx)
+          V(:,1) = -V(:,1)
+          theta  = atan2(V(:,2),V(:,1))
+       endwhere
      
     end select
     

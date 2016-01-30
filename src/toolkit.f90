@@ -103,17 +103,22 @@ contains
   !--          Random            --!
   !--------------------------------!
 
-  Subroutine InitRandomSeed()
+  Subroutine InitRandomSeed(nbSeed)
     !- Initialise le random
     !
     implicit none
+    Integer, intent(in), optional       :: nbSeed
     Integer                             :: i, n, clock
     Integer, Dimension(:), Allocatable  :: seed
 
     Call Random_seed(size = n)
     Allocate(seed(n))
-    Call System_clock(COUNT=clock)
-    seed = clock + 37 * (/ (i - 1, i = 1, n) /)
+    if (present(nbSeed)) then
+       seed = nbSeed * (/ (i - 1, i = 1, n) /)
+    else
+       Call System_clock(COUNT=clock)
+       seed = clock + 37 * (/ (i - 1, i = 1, n) /)
+    end if
     Call Random_seed(PUT = seed)
     Deallocate(seed)
   End Subroutine InitRandomSeed

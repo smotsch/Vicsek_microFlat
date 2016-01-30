@@ -14,7 +14,7 @@ F
 .5
 1
 ## Riemann: propLeft
-0.33333
+0.5
 ##--
 ##---- IC velocity: initCondTheta (1:uniform, 2:Gaussian, 3:Riemann pbm)
 ##--
@@ -23,7 +23,7 @@ F
 0 
 0.00000000001
 ## Riemann: thetaL, thetaR, temperature
-0
 1
+-1
 0.01
 
