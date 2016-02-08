@@ -20,7 +20,6 @@ module input_output_MicroVic_flat
      Integer                            :: nbSeed
      Character(len=80)                  :: strSeed
      Logical                            :: isTrajectorySave
-     Logical                            :: isFormatVtk
      Integer                            :: jumpPrint
      Double Precision                   :: dx, dxy, dtheta
 
@@ -85,8 +84,6 @@ contains
     read(15,*)P%nbSeed
     read(15,*)temp
     read(15,*)P%isTrajectorySave
-    read(15,*)temp
-    read(15,*)P%isFormatVtk
     read(15,*)temp
     read(15,*)P%dx
     read(15,*)P%dxy
@@ -174,9 +171,9 @@ contains
     case(2)
        print *," Boundary condtion    :  reflexive"
     case(3)
-       print *," Boundary condtion    :  reflexive-periodic"
-    case(4)
        print *," Boundary condtion    :  periodic-reflexive"
+    case(4)
+       print *," Boundary condtion    :  reflexive-periodic"
     case(5)
        print *," Boundary condtion    :  ellipse"
     case default
@@ -214,11 +211,6 @@ contains
        print *," Save distribution angle"
        print "(A25,f8.2)","   Meshgrid (dTheta)   =   ",P%dTheta
     end if
-    if (P%isFormatVtk) Then
-       print *," Format save          :    VTK"
-    else
-       print *," Format save          :    Octave"
-    endif
     
   end subroutine PrintInfo
 
@@ -313,227 +305,6 @@ contains
        close(10)
     end if
   end Subroutine FilePrintArray2D
-
-  Subroutine FilePrintArray2D_vtk(density,u,v,dx,dy,fileName,isUnFormatted,nbIteration)
-    !- Same as FilePrint for array
-    implicit none
-    Double Precision, Dimension(:,:), intent(in) :: density,u,v
-    Double Precision, intent(in)                 :: dx,dy
-    Character (len=*), intent(in)                :: fileName
-    Logical, intent(in)                          :: isUnFormatted
-    Integer, intent(in), optional                :: nbIteration
-    real, Dimension(:,:), allocatable            :: uv_combined
-    Integer                                      :: i,j, n_x, n_y
-    Character(9)                                 :: cNbIteration
-    Character(9)                                 :: cFormat
-    Character (len=80)                           :: fileName_ext,cbuffer
-    character(1), parameter                      :: newline=char(10)
-
-    !- Init: change the fileName
-    n_x = size(density(:,1)) -1
-    n_y = size(density(1,:)) -1
-    if (present(nbIteration)) Then
-       write(cNbIteration,'(I9.9)') nbIteration
-    else
-       cNbIteration = ''
-    endif
-    if (isUnFormatted) then
-       cFormat='_bin.vtk'
-    else
-       cFormat='.vtk'
-    endif
-    fileName_ext = trim(fileName)//trim(cNbIteration)//cFormat
-
-    allocate(uv_combined(3,(n_x+1)*(n_y+1)))
-    uv_combined(1,:) = pack(real(u),.true.) !real( reshape( u  )
-    uv_combined(2,:) = pack(real(v),.true.)
-    uv_combined(3,:) = 0
-
-    !- Open and write
-    if (isUnFormatted) then
-       ! binary format
-       open(unit       = 10,       &
-         file       = trim(fileName_ext), &
-         form       = 'UNFORMATTED', &
-         access     = 'STREAM', &
-         action     = 'WRITE',        &
-         convert    = 'BIG_ENDIAN')
-    else    
-       Open(Unit=10,file=fileName_ext)
-20     format(100000(I5))
-40     format(100000(F6.2))
-50     format(100000(F12.6))
-    endif
-
-    !-------------------------------------!
-    !-----------  header file  -----------!
-    !-------------------------------------!
-    if (isUnFormatted) then
-       write(10) "# vtk DataFile Version 1.0"//newline
-       write(10) "vtk output"//newline
-       write(10) "BINARY"//newline
-       write(10) "DATASET RECTILINEAR_GRID"//newline
-       write(cbuffer,fmt='(A,3I7)') 'DIMENSIONS ',n_x+1,n_y+1,1
-       write(unit=10)trim(cbuffer)//newline
-       write(cbuffer,fmt='(A,I7,A)') 'X_COORDINATES ',n_x+1,' float'
-       write(10) trim(cbuffer)//newline
-       write(10) real(dx*(/ (i, i=0,n_x) /) )
-       write(10) newline
-       write(cbuffer,fmt='(A,I7,A)') 'Y_COORDINATES ',n_y+1,' float'
-       write(10) trim(cbuffer)//newline
-       write(10) real(dy*(/ (j, j=0,n_y) /))
-       write(10) newline
-       write(cbuffer,fmt='(A)') 'Z_COORDINATES 1 float'
-       write(10) trim(cbuffer)//newline
-       write(10) real(0)
-    else
-       write(10,"(A)") "# vtk DataFile Version 1.0"
-       write(10,"(A)") "vtk output"
-       write(10,"(A)") "ASCII"
-       write(10,"(A)") "DATASET RECTILINEAR_GRID"
-       write(10,"(A)",advance='no') "DIMENSIONS "
-       write(10,20) n_x+1, n_y+1, 1
-       write(10,"(A)",advance='no') "X_COORDINATES "
-       write(10,'(I0)',advance='no') n_x+1
-       write(10,"(A)") " float"
-       write(10,40) dx*(/ (i, i=0,n_x) /)
-       write(10,"(A)",advance='no') "Y_COORDINATES "
-       write(10,'(I0)',advance='no') n_y+1
-       write(10,"(A)") " float"
-       write(10,40) dy*(/ (j, j=0,n_y) /)
-       write(10,"(A)") "Z_COORDINATES 1 float"
-       write(10,40) 0
-    endif
-
-    !-------------------------------------!
-    !-----------      data     -----------!
-    !-------------------------------------!
-
-    if (isUnFormatted) then
-       write(10) newline//newline
-       write(cbuffer,fmt='(A,I14)')'POINT_DATA ', (n_x+1)*(n_y+1)
-       write(10) trim(cbuffer)//newline
-       write(10) "SCALARS Density float"//newline
-       write(10) "LOOKUP_TABLE default"//newline
-       write(10) real(density)
-       write(10) newline//newline
-       write(10) "VECTORS vectors float"//newline
-       write(10) uv_combined
-    else
-       write(10,"(A)")
-       write(10,"(A)",advance='no') "POINT_DATA "
-       write(10,"(I0)") (n_x+1)*(n_y+1)
-       write(10,"(A)") "SCALARS Density float"
-       write(10,"(A)") "LOOKUP_TABLE default"
-       write(10,50) density
-       write(10,"(A)")
-       write(10,"(A)") "VECTORS vectors float"
-       write(10,50) uv_combined
-    endif
-
-    close(10)
-
-    Deallocate(uv_combined)
-    
-  end Subroutine FilePrintArray2D_vtk
-
-
-  Subroutine FilePrintParticle_vtk(X,V,fileName,nbIteration)
-    !- Same as FilePrint for array
-    implicit none
-    Double Precision, Dimension(:,:), intent(in) :: X,V
-    Character (len=*), intent(in)                :: fileName
-    Integer, intent(in), optional                :: nbIteration
-    real, Dimension(:,:), allocatable            :: X_3D,V_3D
-    Integer                                      :: N
-    Character(9)                                 :: Extension
-    Character (len=80)                           :: fileName_ext,cbuffer
-    character(1), parameter                      :: newline=char(10)
-    !- Init: change the fileName
-    N = size(X(:,1))
-    if (present(nbIteration)) Then
-       write(Extension,'(I9.9)') nbIteration
-       fileName_ext = trim(fileName)//trim(Extension)//'_bin.vtk'
-    else
-       fileName_ext = trim(fileName)//'_bin.vtk'
-    endif
-    allocate(X_3D(N,3),V_3D(N,3))
-    X_3D(:,1:2) = real(X)
-    X_3D(:,3)   = 0
-    V_3D(:,1:2) = real(V)
-    V_3D(:,3)   = 0
-    
-    !- Open and write
-    open(unit       = 10,       &
-         file       = trim(fileName_ext), &
-         form       = 'UNFORMATTED', &
-         access     = 'STREAM', &
-         action     = 'WRITE',        &
-         convert    = 'BIG_ENDIAN')
-    write(10) "# vtk DataFile Version 1.0"//newline
-    write(10) "Unstructured Grid particles"//newline
-    write(10) "BINARY"//newline
-    write(10) "DATASET UNSTRUCTURED_GRID"//newline
-    write(cbuffer,fmt='(A,I10,A)') 'POINTS ',N,' float'
-    write(unit=10)trim(cbuffer)//newline
-    !do i = 1,N
-    !   write(10) real( (/X(i,1),X(i,2),0d0 /) )
-    !end do
-    write(10) transpose( X_3D(1:N,1:3) )
-    write(unit=10) newline//newline
-    write(cbuffer,fmt='(A,I10)') 'POINT_DATA ',N
-    write(unit=10) trim(cbuffer)//newline
-    write(unit=10)'VECTORS vectors float'//newline
-    ! do i = 1,N
-    !    write(10) real( (/V(i,1),V(i,2),0d0 /) )
-    ! end do
-    write(10) transpose( V_3D(1:N,1:3) )
-    close(10)
-
-  end Subroutine FilePrintParticle_vtk
-
-
-
-  Subroutine FilePrintParticle_vtk_notBin(X,V,fileName,nbIteration)
-    !- Same as FilePrint for array
-    implicit none
-    Double Precision, Dimension(:,:), intent(in) :: X,V
-    Character (len=*), intent(in)                :: fileName
-    Integer, intent(in), optional                :: nbIteration
-    Integer                                      :: i,N
-    Character(9)                                 :: Extension
-    Character (len=80)                           :: fileName_ext
-    !- Init: change the fileName
-    N = size(X(:,1))
-    if (present(nbIteration)) Then
-       write(Extension,'(I9.9)') nbIteration
-       fileName_ext = trim(fileName)//trim(Extension)//'.vtk'
-    else
-       fileName_ext = trim(fileName)//'.vtk'
-    endif
-    !- Open and write
-50  format(100000(F12.6))
-    Open(Unit=10,file=fileName_ext)
-    write(10,"(A)") "# vtk DataFile Version 2.0"
-    write(10,"(A)") "Unstructured Grid particles"
-    write(10,"(A)") "ASCII"
-    write(10,"(A)") "DATASET UNSTRUCTURED_GRID"
-    write(10,"(A)",advance='no') "POINTS "
-    write(10,'(I0)',advance='no') N
-    write(10,"(A)") " float"
-    do i = 1,N
-       write(10,50) (/X(i,1),X(i,2),0d0 /)
-    end do
-    write(10,"(A)")
-    write(10,"(A)",advance='no') "POINT_DATA "
-    write(10,"(I0)") N
-    write(10,"(A)") "VECTORS vectors float"
-    do i = 1,N
-       write(10,50) (/V(i,1),V(i,2),0d0 /)
-    end do
-    close(10)
-
-  end Subroutine FilePrintParticle_vtk_notBin
 
 
   Subroutine BarProgress(i,imax)

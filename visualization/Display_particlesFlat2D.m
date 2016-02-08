@@ -20,10 +20,10 @@ BC        = str2num(C{1}{18});
 dt        = str2num(C{1}{18});
 Time      = str2num(C{1}{19});
 stringTrajectorySave = C{1}{28};
-dx        = str2num(C{1}{32});
-dxy       = str2num(C{1}{33});
-dtheta    = str2num(C{1}{34});
-jumpPrint = str2num(C{1}{37});
+dx        = str2num(C{1}{31});
+dxy       = str2num(C{1}{32});
+dtheta    = str2num(C{1}{33});
+jumpPrint = str2num(C{1}{35});
 fclose(fid);
 
 %%------------------ 0.2) Initialisation ------------------%%

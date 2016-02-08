@@ -69,13 +69,9 @@ Program MicroVic_flat
   Call Cpu_time(start)
   if (P%isTrajectorySave) then
      !- Write the intial condition
-     if (P%isFormatVtk) then
-        Call FilePrintParticle_vtk(X,V,"../data/particle_"//P%strSeed,0)
-     else
-        Call FilePrintVector(X(:,1),"../data/particleX_",.true.,0)
-        Call FilePrintVector(X(:,2),"../data/particleY_",.true.,0)
-        Call FilePrintVector(theta,"../data/particleTheta_",.true.,0)
-     endif
+     Call FilePrintVector(X(:,1),"../data/particleX_",.true.,0)
+     Call FilePrintVector(X(:,2),"../data/particleY_",.true.,0)
+     Call FilePrintVector(theta,"../data/particleTheta_",.true.,0)
   endif
   !- The moments
   if (P%dx/=0d0)     Then ; Call Moment1Dx(X(:,1),theta,P,0);    end if
@@ -172,13 +168,9 @@ Program MicroVic_flat
      if (modulo(iStep,P%jumpPrint)==0 .or. iStep==nSteps) Then
         if (P%isTrajectorySave) then
            !- print particles
-           if (P%isFormatVtk) then
-              Call FilePrintParticle_vtk(X,V,"../data/particle_"//P%strSeed,iStep)
-           else
-              Call FilePrintVector(X(:,1),"../data/particleX_",.true.,iStep)
-              Call FilePrintVector(X(:,2),"../data/particleY_",.true.,iStep)
-              Call FilePrintVector(theta,"../data/particleTheta_",.true.,iStep)
-           endif
+           Call FilePrintVector(X(:,1),"../data/particleX_",.true.,iStep)
+           Call FilePrintVector(X(:,2),"../data/particleY_",.true.,iStep)
+           Call FilePrintVector(theta,"../data/particleTheta_",.true.,iStep)
         end if
         if (P%dx/=0d0)     Then ; Call Moment1Dx(X(:,1),theta,P,iStep);    end if
         if (P%dxy/=0d0)    Then ; Call Moment2D(X,theta,P,iStep);          end if

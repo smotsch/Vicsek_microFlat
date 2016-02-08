@@ -69,15 +69,12 @@ the PIC method (Particle-In-Cell) of order 2 by default.
 
 ## Graphics
 
-To display the results of the computations with **Octave**
+To display the results of the computations with **Octave** or **Python**
 ```bash
 	> Display_particlesFlat2D.m   # plot the particles
 	> Display_macroFlat2D.m       # plot the macro. density/velocity
 ```
-in the folder `visualization`. To have faster (and nicer) visualization, one
-can use **Paraview** along with the scripts `paraview_density_flat2D.py` and
-`paraview_particles_flat2D.py`. It requires to use the option `T` in the parameter file
-`PARAMETER_MicroVic_flat.txt` at the line 30. 
+in the folder `visualization`.
 
 ## Parameters
 

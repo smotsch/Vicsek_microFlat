@@ -101,12 +101,12 @@ contains
     Call Div0x(f_u_x,dens_x,u_x)
     Call Div0x(f_v_x,dens_x,v_x)
     !- Print the result
-    Call FilePrintVector(dens_x,"../data/dens1Dx_",.true.,iTime)
-    Call FilePrintVector(u_x,"../data/u1Dx_",.true.,iTime)
-    Call FilePrintVector(v_x,"../data/v1Dx_",.true.,iTime)
+    Call FilePrintVector(dens_x,"../data/dens1Dx_"//P%strSeed,.true.,iTime)
+    Call FilePrintVector(u_x,"../data/u1Dx_"//P%strSeed,.true.,iTime)
+    Call FilePrintVector(v_x,"../data/v1Dx_"//P%strSeed,.true.,iTime)
     !- Angle
     Call AngleVec_N(reshape( (/ u_x , v_x /), (/n_x,2/) ),angle_V)
-    Call FilePrintVector(angle_V,"../data/theta1Dx_",.true.,iTime)
+    Call FilePrintVector(angle_V,"../data/theta1Dx_"//P%strSeed,.true.,iTime)
     !- Deallocate
     DeAllocate(dens_x,f_u_x,u_x,f_v_x,v_x,angle_V)
 
@@ -187,13 +187,9 @@ contains
     Call Div0(f_u,rho,u)
     Call Div0(f_v,rho,v)
     !- Print the moments
-    if (P%isFormatVtk) then
-       Call FilePrintArray2D_vtk(rho,u,v,P%Lx/n_x,P%Ly/n_y,"../data/rho2D_",.true.,iTime)
-    else
-       Call FilePrintArray2D(rho,"../data/rho2D_",.true.,iTime)
-       Call FilePrintArray2D(u,"../data/u2D_",.true.,iTime)
-       Call FilePrintArray2D(v,"../data/v2D_",.true.,iTime)
-    endif
+    Call FilePrintArray2D(rho,"../data/rho2D_",.true.,iTime)
+    Call FilePrintArray2D(u,"../data/u2D_",.true.,iTime)
+    Call FilePrintArray2D(v,"../data/v2D_",.true.,iTime)
     
     Deallocate(rho,f_u,u,f_v,v)
 

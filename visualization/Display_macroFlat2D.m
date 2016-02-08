@@ -3,7 +3,7 @@
 %%
 
 %% Parameters visualisation
-choiceDensity = 2;		% 1: ρ(x),u(x)  2: ρ(x,y),u(x,y) 3: g(θ)
+choiceDensity = 1;		% 1: ρ(x),u(x)  2: ρ(x,y),u(x,y) 3: g(θ)
 lengthArrow2D = .2;	        % for 2: ρ(x,y),u(x,y)
 isTheoricCurveTheta = 0;	% for 3: g(θ)
 
@@ -19,10 +19,10 @@ Lx        = str2num(C{1}{12});
 Ly        = str2num(C{1}{13});
 dt        = str2num(C{1}{18});
 Time      = str2num(C{1}{19});
-dx        = str2num(C{1}{32});
-dxy       = str2num(C{1}{33});
-dtheta    = str2num(C{1}{34});
-jumpPrint = str2num(C{1}{37});
+dx        = str2num(C{1}{31});
+dxy       = str2num(C{1}{32});
+dtheta    = str2num(C{1}{33});
+jumpPrint = str2num(C{1}{35});
 fclose(fid);
 
 
@@ -71,13 +71,6 @@ switch(choiceDensity)
     zMax = 1.3;
 end
 
-%% init the figure
-if (shouldSave==1)
-    %figure('visible','off')
-    %system('rm images/density*')
-else
-    figure('visible','on')
-end
 clf
 
 %% load Binary data
@@ -135,8 +128,6 @@ for iTime=0:jumpPrint:nTime	% Warning: rm images/*
         densTheta = loadBinary(['../data/densTheta_',num2str(iTime,'%09d'), '.udat']);
     end
 
-
-    
     %%---------------------------------------------------%%
     %%---------------    B) plot data     ---------------%%
     %%---------------------------------------------------%%
@@ -145,15 +136,24 @@ for iTime=0:jumpPrint:nTime	% Warning: rm images/*
       case 1
         %% Density in x
         %%-------------
-        plot(intX,Lx*dens1Dx,'linewidth',2,intX,u1Dx,'linewidth',2,intX,e1Dx,'-','linewidth',2)
-        xlabel('x','fontsize',14)
+        plot(intX,Lx*dens1Dx, 'linewidth',2,...
+             intX,u1Dx,'-.', ...
+             intX,v1Dx)
+        %intX, e1Dx,'-','linewidth',2)
+        xlabel('x')
         axis([0 Lx zMin zMax])
-        title(['t = ',num2str(iTime*dt,'%10.2f')],'fontsize',14)
-        legend('mass','theta','energy')
+        title(['t = ',num2str(iTime*dt,'%10.2f')])
+        h = legend('rho','u','v');
+        %set(gca(),'linewidth',2)
+        %set(h, 'fontsize', 34,'linewidth',4);
+        %set(gca,'FontSize',30,'linewidth',4);
+        %set(h, 'fontsize', 34);
+        %set(gca,'FontSize',30);
         %% save ?
         if shouldSave==1
-            l = ['images/density1Dx_' , num2str(iTime,'%09d') , '.png'];
-            print(sprintf(l),'-S800,800');
+            l = ['images/density1Dx_' , num2str(iTime,'%09d') , '.jpg'];
+            %print(sprintf(l),'-S800,800','-F:12');
+            print(sprintf(l))
         end
       case 2
         %% Density 2D
@@ -209,13 +209,15 @@ for iTime=0:jumpPrint:nTime	% Warning: rm images/*
         
     end
 
-    pause(.1)		% small break (to see something...)
+    pause(.01)		% small break (to see something...)
 end
 
 %%---------------------------------------------------------------%%
 %%---------------------------------------------------------------%%
 
 toc
+
+break
 
 if (shouldSave==1)
     %% we make a movie
@@ -236,8 +238,6 @@ if (shouldSave==1)
         name = ['../videos/densityTheta_',extension,'.avi'];
         system(['mencoder ''mf://images/densityTheta_*.png'' -mf fps=25 -o ',name,' -ovc lavc -lavcopts vcodec=mpeg4']);
     end
-else
-    pause
 end
 
 %%-- video
