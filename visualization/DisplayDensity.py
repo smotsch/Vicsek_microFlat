@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 
 ##
 ##--- 
@@ -14,7 +14,6 @@ shouldPlot1D  = False
 shouldPlotEnd = False
 saveVideo     = False
 lengthArrow2D  = 1;
-zMax           = .5;
 
 
 ##------------------ 0.1) Read parameters ------------------##
@@ -22,13 +21,14 @@ zMax           = .5;
 f = open('../bin/PARAMETER_MicroVic_flat.txt');
 lines=f.readlines()
 f.close()
+N         = int(lines[5-1])
 Lx        = float(lines[12-1])
 Ly        = float(lines[13-1])
 dt        = float(lines[18-1])
 Time      = float(lines[19-1])
 nSeed     = int(lines[27-1])
 dx        = float(lines[31-1])
-dxy       = float(lines[33-1])
+dxy       = float(lines[32-1])
 jumpPrint = int(lines[35-1])
 
 ##------------------ 0.2) Initialisation ------------------##
@@ -44,22 +44,24 @@ if (shouldPlot1D):
         f = open(nameFile, "rb") 
         f.seek(4, os.SEEK_SET)
         l = np.fromfile(f, dtype=np.float64)
-    f.close()
+        f.close()
         return l
 else:
     # 2D
     nX = int(Lx/dxy+.5)
     nY = int(Ly/dxy+.5)
-    intX = np.arange(nX)*dxy + dxy/2
-    intY = np.arange(nY)*dxy + dxy/2
-    X,Y  = np.meshgrid(intX,intY)
+    intX = np.arange(nX+1)*dxy
+    intY = np.arange(nY+1)*dxy
+    xx, yy = np.meshgrid(intX, intY, sparse=False)
+    rhoMean = N/(nX*nY)/dxy/dxy;
+    zMax = 4*rhoMean;
     def loadBinary2D(nameFile,numberRow):
         # Read the binary data in the file 'nameFile' in 'l'.
         # We also need to precise the number of rows (numberRow).
         f = open(nameFile, "rb") 
         f.seek(4, os.SEEK_SET)
         x = np.fromfile(f, dtype=np.float64)
-        M = x.reshape(numberRow,x.size/numberRow)
+        M = x.reshape(numberRow,x.size/numberRow,order='F') # !!!! Fortran style !!!!!
         f.close()
         return M
 if (shouldPlotEnd):
@@ -116,29 +118,33 @@ else:
     ##--------------------------------------------------------##
     #- A) first image
     # load
-    rho = loadBinary2D('../data/rho2D_' + str(0).zfill(9) + '.udat',nY);
-    u2D = loadBinary2D('../data/u2D_'   + str(0).zfill(9) + '.udat',nY);
-    v2D = loadBinary2D('../data/v2D_'   + str(0).zfill(9) + '.udat',nY);
+    extension = str(0).zfill(9) + '.udat'
+    rho = loadBinary2D('../data/rho2D_' + extension ,nX+1);
+    u2D = loadBinary2D('../data/u2D_'   + extension ,nX+1);
+    v2D = loadBinary2D('../data/v2D_'   + extension ,nX+1);
     # plot
-    pltRho = plt.imshow(rho, extent=[0,Lx,0,Ly], clim=(0.0, 0.04),origin='lower')
-    pltUV  = plt.quiver(X,Y,u2D,v2D)#,width=.01,linewidth=1)
+    pltRho = plt.pcolormesh(xx,yy,rho.T,  vmin=0, vmax=zMax, shading='gouraud') # 'gourand' for PIC method
+    pltUV  = plt.quiver(xx,yy,u2D.T,v2D.T, pivot='mid',
+                        scale=20,width=.005,linewidth=.025,alpha=.5)
     # deco
     pltRho.set_cmap('hot_r')
     colorbar = plt.colorbar(pltRho)
-    colorbar.set_ticks(np.arange(0,.041,.01))
+    colorbar.set_ticks(np.arange(0,zMax+.01,zMax/5))
     plt.xlabel(r'$x$',fontsize=20)
     plt.ylabel(r'$y$',fontsize=20)
-    theTitle = plt.title("Solution at time  t="+'{:04.2f}'.format(0*dt), x=.2, y=1,horizontalalignment='left')
+    theTitle = plt.title("Solution at time  t="+'{:04.2f}'.format(0*dt), horizontalalignment='center')
     plt.draw()
     #- B)  boucle
     for iTime in range(0,nTime+1,jumpPrint):
+    ##for iTime in range(0,100+1,jumpPrint):
         # load
-        rho = loadBinary2D('../data/rho2D_' + str(iTime).zfill(9) + '.udat',nY);
-        u2D = loadBinary2D('../data/u2D_'   + str(iTime).zfill(9) + '.udat',nY);
-        v2D = loadBinary2D('../data/v2D_'   + str(iTime).zfill(9) + '.udat',nY);
+        extension = str(iTime).zfill(9) + '.udat'
+        rho = loadBinary2D('../data/rho2D_' + extension ,nX+1);
+        u2D = loadBinary2D('../data/u2D_'   + extension ,nX+1);
+        v2D = loadBinary2D('../data/v2D_'   + extension ,nX+1);
         # update
-        pltRho.set_array(rho)
-        pltUV.set_UVC(u2D,v2D)
+        pltRho.set_array(rho.T.ravel())
+        pltUV.set_UVC(u2D.T,v2D.T)
         # deco
         theTitle.set_text('Solution at time t=' +'{:04.2f}'.format(iTime*dt))
         plt.draw()
@@ -152,9 +158,10 @@ sys.exit(0)
 ##---------------------------------------------------------------##
 ##---------------------------------------------------------------##
 
-## mencoder ''mf://*.jpg'' -mf fps=40 -o ../bidon3.avi -ovc lavc -lavcopts vcodec=mpeg4
+## mencoder ''mf://*.jpg'' -mf fps=25 -o ../bidon3.avi -ovc lavc -lavcopts vcodec=mpeg4
 ## mencoder ''mf://*.jpg'' -mf fps=25 -o ../bidon3_bis.avi -ovc x264 -lavcopts vcodec=mpeg4
-## mencoder ''mf://*.jpg'' -mf fps=40 -o ../output3.avi -oac copy -ovc copy
+## mencoder ''mf://*.jpg'' -mf fps=25 -o ../bidon3_bis.avi -ovc x264 -lavcopts vcodec=mpeg4 -vf scale=640:-2
+## mencoder ''mf://*.jpg'' -mf fps=25 -o ../output3.avi -oac copy -ovc copy
 
 # save csv
 #---------
@@ -174,3 +181,7 @@ with open('data_rho2D_time' + str(iTime) + '.csv', 'w') as fp:
     a = csv.writer(fp, delimiter=',')
     a.writerows(np.c_[X.flatten(), Y.flatten(),
                       rho.flatten(), u2D.flatten(), v2D.flatten()] )
+
+
+## ressources
+# http://stackoverflow.com/questions/29009743/using-set-array-with-pyplot-pcolormesh-ruins-figure

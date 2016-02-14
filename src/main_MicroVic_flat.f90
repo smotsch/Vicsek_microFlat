@@ -22,7 +22,6 @@ Program MicroVic_flat
   Integer, Dimension(:), Allocatable            :: posGrid, firstParticleGrid
   Integer, Dimension(:), Allocatable            :: verletListPrev, verletListNext
   Integer                                       :: iStep,nSteps
-  Character(80)                                 :: nameFile
   Double Precision                              :: sq_2d_dt,stdNoise
   Integer                                       :: i0, i0PosGrid, i0PosGrid_old
   Real                                          :: start, finish

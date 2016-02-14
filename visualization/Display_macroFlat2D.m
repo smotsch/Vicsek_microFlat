@@ -3,11 +3,11 @@
 %%
 
 %% Parameters visualisation
-choiceDensity = 1;		% 1: ρ(x),u(x)  2: ρ(x,y),u(x,y) 3: g(θ)
-lengthArrow2D = .2;	        % for 2: ρ(x,y),u(x,y)
+choiceDensity = 2;		% 1: ρ(x),u(x)  2: ρ(x,y),u(x,y) 3: g(θ)
+lengthArrow2D = .5;	        % for 2: ρ(x,y),u(x,y)
 isTheoricCurveTheta = 0;	% for 3: g(θ)
 
-shouldSave    = 1;
+shouldSave    = 0;
 shouldPlotEnd = 0;
 
 
@@ -15,6 +15,7 @@ shouldPlotEnd = 0;
 %%----------------------------------------------------------%%
 fid = fopen('../bin/PARAMETER_MicroVic_flat.txt');
 C   = textscan(fid, '%s','delimiter', '\n');
+N         = str2num(C{1}{5});
 Lx        = str2num(C{1}{12});
 Ly        = str2num(C{1}{13});
 dt        = str2num(C{1}{18});
@@ -46,18 +47,19 @@ switch(choiceDensity)
     %% Density 2D
     nXgrid = floor(Lx/dxy);
     nYgrid = floor(Ly/dxy);
-    intX = dxy*((1:nXgrid)-.5);
-    intY = dxy*((1:nYgrid)-.5);
-    %%intX = dxy*(0:nXgrid);
-    %%intY = dxy*(0:nYgrid);
+    %%intX = dxy*((1:nXgrid)-.5);
+    %%intY = dxy*((1:nYgrid)-.5);
+    intX = dxy*(0:nXgrid);
+    intY = dxy*(0:nYgrid);
     %% colormap hot
     l_red   = [ones(1,38)  , (26:-1:1)/26];
     l_green = [ones(1,13)   , (26:-1:1)/26 , zeros(1,25)];
     l_blue  = [(12:-1:1)/12 , zeros(1,52)];
     A_hot   = [l_red',l_green',l_blue'];
-    %% parameters
+    %% cmin,cmax
     zMin = 0;
-    zMax = 0.05;
+    rhoMean = N/(nXgrid*nYgrid)/dxy/dxy;
+    zMax = 4*rhoMean;
   case 3
     %% Density in θ
     nTheta   = floor(2*pi/dtheta);
@@ -91,78 +93,55 @@ function matrixData=loadBinary2D(nameFile,numberRow)
 endfunction
 
 
-
-%%---------------------------------------------------------------%%
 %%---------------------------------------------------------------%%
 %%------------------------  la boucle  --------------------------%%
 %%---------------------------------------------------------------%%
-%%---------------------------------------------------------------%%
-
-
 tic
 
-for iTime=0:jumpPrint:nTime	% Warning: rm images/*
-    
-    %%---------------------------------------------------%%
+for iTime=0:jumpPrint:nTime	% Warning: rm images/*    
     %%---------------    A) load data     ---------------%%
     %%---------------------------------------------------%%
-    
+    extension = [num2str(iTime,'%09d'), '.udat'];
     switch(choiceDensity)
       case 1
         %% Density in x
-        %%-------------
-        dens1Dx   = loadBinary(['../data/dens1Dx_',num2str(iTime,'%09d'), '.udat']);
-        theta_x   = loadBinary(['../data/theta1Dx_',num2str(iTime,'%09d'), '.udat']);
-        u1Dx      = loadBinary(['../data/u1Dx_',num2str(iTime,'%09d'), '.udat']);
-        v1Dx      = loadBinary(['../data/v1Dx_',num2str(iTime,'%09d'), '.udat']);
+        dens1Dx   = loadBinary(['../data/dens1Dx_' ,extension]);
+        theta_x   = loadBinary(['../data/theta1Dx_',extension]);
+        u1Dx      = loadBinary(['../data/u1Dx_'    ,extension]);
+        v1Dx      = loadBinary(['../data/v1Dx_'    ,extension]);
         e1Dx      = 1 - u1Dx.^2 - v1Dx.^2;
       case 2
         %% Density 2D
-        %%-----------
-        rho2D     = loadBinary2D(['../data/rho2D_',num2str(iTime,'%09d'), '.udat'],nXgrid);
-        u2D       = loadBinary2D(['../data/u2D_',num2str(iTime,'%09d'), '.udat'],nXgrid);
-        v2D       = loadBinary2D(['../data/v2D_',num2str(iTime,'%09d'), '.udat'],nXgrid);
+        rho2D     = loadBinary2D(['../data/rho2D_',extension],nXgrid+1);
+        u2D       = loadBinary2D(['../data/u2D_'  ,extension],nXgrid+1);
+        v2D       = loadBinary2D(['../data/v2D_'  ,extension],nXgrid+1);
       case 3
         %% Density θ
-        %%----------
-        densTheta = loadBinary(['../data/densTheta_',num2str(iTime,'%09d'), '.udat']);
+        densTheta = loadBinary(['../data/densTheta_',extension]);
     end
-
-    %%---------------------------------------------------%%
     %%---------------    B) plot data     ---------------%%
     %%---------------------------------------------------%%
-
     switch(choiceDensity)
       case 1
         %% Density in x
-        %%-------------
         plot(intX,Lx*dens1Dx, 'linewidth',2,...
              intX,u1Dx,'-.', ...
              intX,v1Dx)
-        %intX, e1Dx,'-','linewidth',2)
         xlabel('x')
         axis([0 Lx zMin zMax])
         title(['t = ',num2str(iTime*dt,'%10.2f')])
         h = legend('rho','u','v');
-        %set(gca(),'linewidth',2)
-        %set(h, 'fontsize', 34,'linewidth',4);
-        %set(gca,'FontSize',30,'linewidth',4);
-        %set(h, 'fontsize', 34);
-        %set(gca,'FontSize',30);
-        %% save ?
-        if shouldSave==1
+        if shouldSave==1                % saving?
             l = ['images/density1Dx_' , num2str(iTime,'%09d') , '.jpg'];
-            %print(sprintf(l),'-S800,800','-F:12');
-            print(sprintf(l))
+            print(sprintf(l))           % ,'-S800,800','-F:12'
         end
       case 2
         %% Density 2D
-        %%-----------
         clf
         hold on
-        imagesc(intX,intY,rho2D');
-        set(gca,'YDir','normal')
-        h = quiver(intX,intY,lengthArrow2D*u2D',lengthArrow2D*v2D','linewidth',1,'autoScale','off'); % imagesc: u,v inverse
+        pcolor(intX,intY,rho2D');                   %imagesc(intX,intY,rho2D'); set(gca,'YDir','normal')
+        h = quiver(intX,intY, lengthArrow2D*u2D',lengthArrow2D*v2D', ...
+                   'linewidth',1,'autoScale','off');% imagesc: u,v inverse
         set (h, 'maxheadsize', .3);
         hold off
         %% deco
@@ -174,24 +153,20 @@ for iTime=0:jumpPrint:nTime	% Warning: rm images/*
         ylabel('y','fontsize',36);
         set(gca,'FontSize',30)
         axis([0 Lx 0 Ly],'equal')
-        %% save ?
-        if shouldSave==1
+        if shouldSave==1                 % saving?
             l = ['images/density2D_',num2str(iTime,'%09d'),'.png'];
             print(sprintf(l),'-S1000,800');
-            %%print(sprintf(l));
-            %%close all
         end
       case 3
         %% Density θ
-        %%----------
         if (isTheoricCurveTheta==0)
             plot(intTheta,densTheta,'o-','linewidth',2.5,'markersize',10);
             legend('Numeric');
         else
             %% theta average
             thetaAverage = atan2(sum(sin(intTheta).*densTheta),sum(cos(intTheta).*densTheta));
-            plot(intTheta,densTheta,'o-','linewidth',2.5,'markersize',10,...
-                 intTheta,densTheta,'o','markersize',0,...
+            plot(intTheta,densTheta,'o-','linewidth',2.5,'markersize',10, ...
+                 intTheta,densTheta,'o','markersize',0, ...
                  intTheta2,C*exp(cos(intTheta2-thetaAverage)/d_Theoric),'r','linewidth',3);
             legend('Numeric',' ','Theory');
         end
@@ -201,23 +176,16 @@ for iTime=0:jumpPrint:nTime	% Warning: rm images/*
         set(gca,'xticklabel',{'-\pi','-\pi/2','0','\pi/2','\pi'},'Interpreter','tex')
         set(gca,'FontSize',24)
         title(['t = ',num2str(iTime*dt,'%10.2f')],'fontsize',24)
-        %% save ?
-        if shouldSave==1
+        if shouldSave==1                % saving
             l = ['images/densityTheta_' , num2str(iTime,'%09d') , '.png'];
             print(sprintf(l));
         end
-        
     end
-
     pause(.01)		% small break (to see something...)
 end
 
-%%---------------------------------------------------------------%%
-%%---------------------------------------------------------------%%
-
 toc
-
-break
+%%---------------------------------------------------------------%%
 
 if (shouldSave==1)
     %% we make a movie
@@ -242,6 +210,5 @@ end
 
 %%-- video
 %% system(['mencoder ''mf://images/*.png'' -mf fps=15 -o videos/bidon.avi -ovc lavc -lavcopts vcodec=mpeg4']);
-
 %%-- crop
 %% for name in density2D_*; do convert $name -crop 1100x900+40+0 $name; done
