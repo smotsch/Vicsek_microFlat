@@ -12,9 +12,7 @@ import os, sys, csv
 ## Parameters visualisation
 shouldPlot1D  = False
 shouldPlotEnd = False
-saveVideo     = False
-lengthArrow2D  = 1;
-
+saveVideo     = True
 
 ##------------------ 0.1) Read parameters ------------------##
 ##----------------------------------------------------------##
@@ -94,8 +92,9 @@ if (shouldPlot1D):
     # deco
     plt.axis([0, Lx, -1.2, 2.4])
     plt.xlabel(r'$x$',fontsize=25)
-    theTitle = plt.title("Solution at time t=" +'{:04.2f}'.format(0*dt),
-                         x=.3, y=1,horizontalalignment='left',fontsize=20)
+    theTitle.set_text('Time t=' +'{:04.2f}'.format(iTime*dt))
+    theTitle = plt.title("Time t=" +'{:04.2f}'.format(0*dt),
+                     horizontalalignment='center',fontsize=20)
     plt.legend([r'$\rho$',r'$v$'],fontsize=25)
     plt.legend(prop={'size':25},loc='upper left',fancybox=True,shadow=True)
     plt.draw()
@@ -109,7 +108,7 @@ if (shouldPlot1D):
         for line, y in zip(lines, [rho1Dx, v1Dx]):
             line.set_ydata(y)
         # deco
-        theTitle.set_text('Solution at time t=' +'{:04.2f}'.format(iTime*dt))
+        theTitle.set_text('Time t=' +'{:04.2f}'.format(iTime*dt))
         plt.draw()
     if (saveVideo):
         plt.savefig('images/foo_'+str(iTime).zfill(9) +'.jpg', bbox_inches='tight')
@@ -132,7 +131,7 @@ else:
     colorbar.set_ticks(np.arange(0,zMax+.01,zMax/5))
     plt.xlabel(r'$x$',fontsize=20)
     plt.ylabel(r'$y$',fontsize=20)
-    theTitle = plt.title("Solution at time  t="+'{:04.2f}'.format(0*dt), horizontalalignment='center')
+    theTitle = plt.title("Time  t="+'{:04.2f}'.format(0*dt), horizontalalignment='center')
     plt.draw()
     #- B)  boucle
     for iTime in range(0,nTime+1,jumpPrint):
@@ -146,14 +145,12 @@ else:
         pltRho.set_array(rho.T.ravel())
         pltUV.set_UVC(u2D.T,v2D.T)
         # deco
-        theTitle.set_text('Solution at time t=' +'{:04.2f}'.format(iTime*dt))
+        theTitle.set_text('Time t=' +'{:04.2f}'.format(iTime*dt))
         plt.draw()
         if (saveVideo):
-            plt.savefig('images/foo_'+str(iTime).zfill(9) +'.jpg', bbox_inches='tight')
+            plt.savefig('images/rhoUV_'+str(iTime).zfill(9) +'.jpg', bbox_inches='tight')
 
 sys.exit(0)
-
-
 
 ##---------------------------------------------------------------##
 ##---------------------------------------------------------------##
@@ -162,6 +159,8 @@ sys.exit(0)
 ## mencoder ''mf://*.jpg'' -mf fps=25 -o ../bidon3_bis.avi -ovc x264 -lavcopts vcodec=mpeg4
 ## mencoder ''mf://*.jpg'' -mf fps=25 -o ../bidon3_bis.avi -ovc x264 -lavcopts vcodec=mpeg4 -vf scale=640:-2
 ## mencoder ''mf://*.jpg'' -mf fps=25 -o ../output3.avi -oac copy -ovc copy
+
+
 
 # save csv
 #---------
