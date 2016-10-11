@@ -27,8 +27,6 @@ F
 7
 ## Save trajectories (isTrajectorySave)
 T
-## Save in 'vtk' format? (otherwise octave)
-T
 ## Macro quantities (dx, dxy, dtheta)
 0
 0
