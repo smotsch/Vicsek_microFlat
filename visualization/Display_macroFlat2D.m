@@ -3,12 +3,12 @@
 %%
 
 %% Parameters visualisation
-choiceDensity = 2;		% 1: ρ(x),u(x)  2: ρ(x,y),u(x,y) 3: g(θ)
+choiceDensity = 1;		% 1: ρ(x),u(x)  2: ρ(x,y),u(x,y) 3: g(θ)
 lengthArrow2D = .5;	        % for 2: ρ(x,y),u(x,y)
 isTheoricCurveTheta = 0;	% for 3: g(θ)
 
 shouldSave    = 0;
-shouldPlotEnd = 0;
+shouldPlotEnd = 1;
 
 
 %%------------------ 0.1) Read parameters ------------------%%
@@ -20,6 +20,7 @@ Lx        = str2num(C{1}{12});
 Ly        = str2num(C{1}{13});
 dt        = str2num(C{1}{18});
 Time      = str2num(C{1}{19});
+nSeed     = str2num(C{1}{27});
 dx        = str2num(C{1}{31});
 dxy       = str2num(C{1}{32});
 dtheta    = str2num(C{1}{33});
@@ -101,7 +102,8 @@ tic
 for iTime=0:jumpPrint:nTime	% Warning: rm images/*    
     %%---------------    A) load data     ---------------%%
     %%---------------------------------------------------%%
-    extension = [num2str(iTime,'%09d'), '.udat'];
+    %extension = [num2str(iTime,'%09d'), '.udat'];
+    extension = ['seed',num2str(nSeed),'_',num2str(iTime,'%09d'), '.udat'];
     switch(choiceDensity)
       case 1
         %% Density in x

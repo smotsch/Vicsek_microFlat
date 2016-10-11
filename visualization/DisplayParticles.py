@@ -43,6 +43,9 @@ def loadBinary(nameFile):
     return l
 if (shouldPlotEnd):
     jumpPrint = nTime;
+
+# l = np.fromfile(nameFile, dtype=np.float32, count=-1, sep='')
+# l = np.fromfile(nameFile, dtype=float, count=-1, sep='')
     
 # init
 #-----
